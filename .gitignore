@@ -1,0 +1,10 @@
+.env*
+*.key
+*.pem
+*secret*
+*token*
+*credential*
+__pycache__/
+*.pyc
+*.tmp
+.spacefast/

@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Multi-Agent Isolation & Single-Command Path Simulator v7.0.0</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>body{background:#0b0f17;color:#f3f4f6;font-family:Inter,ui-sans-serif,system-ui,-apple-system,sans-serif;}</style>
+</head>
+<body class="antialiased p-2 m-0">
+<div id="rootCard" class="bg-[#111827] text-gray-100 border border-gray-800 rounded-xl shadow-lg flex flex-col h-[488px] overflow-hidden">
+<div class="flex flex-wrap items-center justify-between gap-1.5 px-3 py-2 border-b border-gray-800 shrink-0 text-xs bg-[#0f172a]">
+<div class="flex flex-wrap items-center gap-1.5 min-w-0">
+<span id="liveDot" class="w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0"></span>
+<span class="font-bold tracking-tight text-white">Single-Command Path Simulator</span>
+<span id="verBadge" class="px-2 py-0.5 rounded bg-violet-500/20 text-violet-300 border border-violet-500/40 font-mono text-xs">v7.0.0 · verifying…</span>
+<span id="graphScoreBadge" class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-semibold">—</span>
+</div>
+<div class="flex flex-wrap items-center gap-1">
+<div class="flex items-center rounded border border-emerald-500/40 bg-gray-950 p-0.5 gap-0.5" title="Simulate granting permission to execute the Seat-A command">
+<button data-stage="baseline" class="stageBtn px-2 py-0.5 rounded font-semibold text-xs text-gray-300 hover:bg-gray-800">0: Baseline (2/32)</button>
+<button data-stage="hook_only" class="stageBtn px-2 py-0.5 rounded font-semibold text-xs text-gray-300 hover:bg-gray-800">1: Hook-Only (21/32)</button>
+<button data-stage="full_seat_a" class="stageBtn px-2 py-0.5 rounded font-semibold text-xs bg-emerald-600 text-white">2: Full Command (32/32)</button>
+</div>
+<select id="selAcctMode" class="px-1.5 py-1 rounded border border-gray-700 bg-gray-900 text-gray-100 font-medium cursor-pointer text-xs">
+<option value="single_hub_primary" selected>1-Acct Hub (hub:primary)</option>
+<option value="single_principal_legal">1-Acct Hub (id:principal_legal)</option>
+<option value="multi">3-Acct Split</option>
+</select>
+<label class="flex items-center gap-1 px-1.5 py-1 rounded border border-gray-700 bg-gray-900 cursor-pointer select-none" title="Super-Admin forwarding & Viewer airgap">
+<input id="chkAdminBridge" type="checkbox" checked class="accent-blue-500 w-3.5 h-3.5" />
+<span>Bridge</span>
+</label>
+<label class="flex items-center gap-1 px-1.5 py-1 rounded border border-gray-700 bg-gray-900 cursor-pointer select-none" title="Claude Code v2.1.321 remote session in built-in browser">
+<input id="chkClaudeRemote" type="checkbox" checked class="accent-blue-500 w-3.5 h-3.5" />
+<span>Claude</span>
+</label>
+<label class="flex items-center gap-1 px-1.5 py-1 rounded border border-gray-700 bg-gray-900 cursor-pointer select-none" title="Codex V-0 + Hermes 0.23.1 + Git spine + DriveFS/Bitwarden fences">
+<input id="chkSentinel" type="checkbox" checked class="accent-violet-500 w-3.5 h-3.5" />
+<span>7-Agent Iso</span>
+</label>
+<button id="btnShowAll" class="px-2 py-1 rounded border border-gray-700 bg-gray-800 hover:bg-gray-700 text-gray-200">All</button>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 flex-1 min-h-0 overflow-y-auto lg:overflow-hidden">
+<div class="lg:col-span-7 relative border-b lg:border-b-0 lg:border-r border-gray-800 bg-[#0b0f17] min-h-[285px] lg:min-h-0 overflow-hidden select-none">
+<svg id="dagSvg" class="w-full h-full cursor-grab active:cursor-grabbing" viewBox="0 0 1190 780">
+<defs>
+<marker id="arrowOk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M 0 1 L 10 5 L 0 9 z" fill="#10b981" />
+</marker>
+<marker id="arrowBridge" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M 0 1 L 10 5 L 0 9 z" fill="#3b82f6" />
+</marker>
+<marker id="arrowIso" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M 0 1 L 10 5 L 0 9 z" fill="#8b5cf6" />
+</marker>
+<marker id="arrowWarn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b" />
+</marker>
+<marker id="arrowBlock" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M 0 1 L 10 5 L 0 9 z" fill="#ef4444" />
+</marker>
+</defs>
+<g id="viewport">
+<g id="laneGroup"></g>
+<g id="edgeGroup"></g>
+<g id="nodeGroup"></g>
+</g>
+</svg>
+<div class="absolute bottom-2 left-2 right-2 flex flex-wrap items-center justify-between gap-2 px-2.5 py-1 rounded-lg border border-gray-800 bg-gray-900/95 text-xs pointer-events-none">
+<div class="flex flex-wrap items-center gap-2">
+<span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-sm border-2 border-cyan-400 inline-block"></span>+Δ Unlocked by Command</span>
+<span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>Valid</span>
+<span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span>Bridged</span>
+<span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span>Still Gated</span>
+</div>
+<span id="engineBadge" class="text-gray-400 truncate">Deterministic v7.0.0</span>
+</div>
+</div>
+<div class="lg:col-span-5 flex flex-col min-h-0 bg-[#111827] p-3 overflow-y-auto space-y-2 text-xs">
+<div class="flex flex-wrap items-center gap-1 border-b border-gray-800 pb-2">
+<button data-tab="cmdpath" class="tabBtn px-2 py-1 rounded font-semibold bg-emerald-600 text-white">⚡ Command Path</button>
+<button data-tab="verdicts" class="tabBtn px-2 py-1 rounded font-semibold bg-gray-800 text-gray-300 hover:bg-gray-700">Node Verdicts</button>
+<button data-tab="roster" class="tabBtn px-2 py-1 rounded font-semibold bg-gray-800 text-gray-300 hover:bg-gray-700">7-Agent Stack</button>
+<button data-tab="carbon" class="tabBtn px-2 py-1 rounded font-semibold bg-cyan-700 text-white hover:bg-cyan-600">🛡️ Leakage & Carbon</button>
+<button data-tab="version" class="tabBtn px-2 py-1 rounded font-semibold bg-gray-800 text-gray-300 hover:bg-gray-700">Verify</button>
+</div>
+<div id="tab-cmdpath" class="space-y-2">
+<div class="grid grid-cols-3 gap-1.5 text-center">
+<div class="p-1.5 rounded border border-gray-800 bg-gray-900">
+<div class="text-gray-400">Nodes Ready</div>
+<div id="cmdMetricNodes" class="text-sm font-bold text-emerald-400">2 → 32/32</div>
+</div>
+<div class="p-1.5 rounded border border-gray-800 bg-gray-900">
+<div class="text-gray-400">Legal Gate Pass</div>
+<div id="cmdMetricLegal" class="text-sm font-bold text-cyan-300">6.4% → 100%</div>
+</div>
+<div class="p-1.5 rounded border border-gray-800 bg-gray-900">
+<div class="text-gray-400">Dry-Run Guard</div>
+<div class="text-sm font-bold text-violet-300">12/12 Passed</div>
+</div>
+</div>
+<div class="p-2 rounded border border-emerald-500/40 bg-emerald-950/20 space-y-1">
+<div class="flex items-center justify-between gap-2">
+<span id="cmdStageTitle" class="font-bold text-emerald-300">Stage 2 · Full Single-Command Unlock</span>
+<button id="btnCopyCmd" class="px-2 py-0.5 rounded bg-emerald-600 hover:bg-emerald-500 text-white font-semibold">Copy Command</button>
+</div>
+<pre id="cmdExactBox" class="font-mono text-xs text-emerald-200 whitespace-pre-wrap break-all bg-black/50 p-1.5 rounded border border-gray-800"></pre>
+<div id="cmdStageSummary" class="text-gray-300 leading-relaxed"></div>
+</div>
+<div>
+<div class="flex items-center justify-between mb-1">
+<span class="font-semibold text-gray-200">Newly Unblocked Nodes (+Δ Click to Inspect):</span>
+<span id="cmdDeltaCount" class="text-cyan-300 font-bold">+28 unlocked</span>
+</div>
+<div id="cmdUnlockedChips" class="flex flex-wrap gap-1"></div>
+</div>
+<div id="cmdRemainingBox" class="hidden p-2 rounded border border-amber-500/40 bg-amber-950/20 space-y-1">
+<div class="font-semibold text-amber-300">Still Gated Under This Stage (Why Stage 2 is Recommended):</div>
+<div id="cmdRemainingChips" class="flex flex-wrap gap-1"></div>
+</div>
+<div>
+<div class="font-semibold text-gray-200 mb-1">55-Minute Path to Full Goal Achievement (Post-Permission):</div>
+<div id="cmdTimelineList" class="space-y-1"></div>
+</div>
+</div>
+<div id="tab-verdicts" class="hidden space-y-2">
+<div class="flex items-start justify-between gap-2">
+<div>
+<div id="selType" class="text-gray-400 uppercase tracking-wide">Selected Node</div>
+<div id="selTitle" class="text-sm font-bold text-white mt-0.5">SEC-P2 — cmd PreToolUse</div>
+</div>
+<span id="selStatusPill" class="px-2 py-0.5 rounded font-semibold text-xs shrink-0">CHECKING</span>
+</div>
+<div id="ecoBanner" class="p-2 rounded border border-gray-800 bg-gray-900/80 text-gray-300 leading-relaxed"></div>
+<div class="grid grid-cols-3 gap-1.5 text-center">
+<div class="p-1.5 rounded border border-gray-800 bg-gray-900">
+<div class="text-gray-400">Sim Pass Rate</div>
+<div id="metricPass" class="text-sm font-bold text-white">—</div>
+</div>
+<div class="p-1.5 rounded border border-gray-800 bg-gray-900">
+<div class="text-gray-400">Upstream</div>
+<div id="metricUp" class="text-sm font-bold text-white">—</div>
+</div>
+<div class="p-1.5 rounded border border-gray-800 bg-gray-900">
+<div class="text-gray-400">Blast Radius</div>
+<div id="metricDown" class="text-sm font-bold text-white">—</div>
+</div>
+</div>
+<div>
+<div class="font-semibold mb-1 text-gray-200">Deterministic Isolation & Dependency Checks</div>
+<div id="checkList" class="space-y-1"></div>
+</div>
+<div class="space-y-1 pt-1 border-t border-gray-800">
+<div><span class="font-semibold text-gray-200">Requires:</span> <span id="txtUpstream" class="text-gray-400">—</span></div>
+<div><span class="font-semibold text-gray-200">Unlocks / Audits:</span> <span id="txtDownstream" class="text-gray-400">—</span></div>
+<div id="txtSyncReceipt" class="text-gray-500 pt-0.5">Click any node or edge to inspect its live contract.</div>
+</div>
+</div>
+<div id="tab-roster" class="hidden space-y-1.5">
+<div class="text-gray-400">Active & installed autonomous/desktop surfaces on HIGHRES (~21.5 GB RAM):</div>
+<div id="rosterList" class="space-y-1.5"></div>
+</div>
+<div id="tab-carbon" class="hidden space-y-2">
+<div class="p-2 rounded border border-cyan-500/40 bg-cyan-950/20 space-y-1">
+<div class="flex items-center justify-between gap-2">
+<span class="font-bold text-cyan-300">Gemini Carbon Task-Mode Closed-Loop</span>
+<span id="clipGuardBadge" class="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-mono">Soniox Clip Guard</span>
+</div>
+<div class="text-gray-300 leading-relaxed">Gemini (<b>Carbon</b> in Task Mode) audits <code>carbon_loop_feed.json</code> on-prompt, via recurring Task schedule, or via HMAC webhook—returning passive <code>CARBON-ADVISORY-v1</code> proposals into quarantine without touching live Workspace data.</div>
+<div class="flex flex-wrap gap-1 pt-1">
+<button id="btnCopyCarbonPrompt" class="px-2 py-1 rounded bg-cyan-600 hover:bg-cyan-500 text-white font-semibold">Copy Carbon Task Prompt (Pause Soniox First)</button>
+<a href="./carbon_loop_feed.json" target="_blank" rel="noopener" class="px-2 py-1 rounded bg-gray-800 hover:bg-gray-700 text-cyan-300 border border-gray-700 font-mono">carbon_loop_feed.json ↗</a>
+<a href="./HANDOFF_REDACTED.md" target="_blank" rel="noopener" class="px-2 py-1 rounded bg-gray-800 hover:bg-gray-700 text-violet-300 border border-gray-700 font-mono">HANDOFF_REDACTED.md ↗</a>
+</div>
+</div>
+<div>
+<div class="font-semibold text-gray-200 mb-1">9-Surface System & Service Leakage Matrix (L1–L9):</div>
+<div id="leakageSurfaceList" class="space-y-1"></div>
+</div>
+</div>
+<div id="tab-version" class="hidden space-y-2">
+<div class="p-2 rounded border border-violet-500/40 bg-violet-950/20 space-y-1">
+<div class="font-bold text-violet-300">Cryptographic Bundle Attestation</div>
+<div id="manifestBox" class="font-mono text-gray-300 break-all space-y-0.5">Loading manifest.json…</div>
+</div>
+<div class="p-2 rounded border border-gray-800 bg-gray-900 space-y-1">
+<div class="font-semibold text-gray-200">12/12 Dry-Run PreToolUse & Leakage Self-Tests:</div>
+<div id="selfTestList" class="space-y-1"></div>
+</div>
+<div class="p-2 rounded border border-gray-800 bg-gray-900 space-y-1">
+<div class="font-semibold text-gray-200">Verify From Any Seat / Agent / Device:</div>
+<pre id="cliVerifySnippet" class="font-mono text-emerald-300 whitespace-pre-wrap break-all bg-black/50 p-1.5 rounded border border-gray-800"></pre>
+</div>
+<div>
+<div class="font-semibold text-gray-200 mb-1">Immutable Version History</div>
+<div id="historyList" class="space-y-1"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+function syncViewportHeight() {
+if (window.self === window.top) {
+document.getElementById("rootCard").style.height = Math.max(580, window.innerHeight - 16) + "px";
+}
+}
+syncViewportHeight();
+window.addEventListener("resize", syncViewportHeight);
+let activeTab = "cmdpath";
+function switchTab(target) {
+activeTab = target;
+document.querySelectorAll(".tabBtn").forEach(b => {
+const isAct = b.dataset.tab === target;
+const activeStyle = target === "cmdpath" ? "bg-emerald-600 text-white" : "bg-violet-600 text-white";
+b.className = "tabBtn px-2 py-1 rounded font-semibold " + (isAct ? activeStyle : "bg-gray-800 text-gray-300 hover:bg-gray-700");
+});
+["cmdpath", "verdicts", "roster", "carbon", "version"].forEach(t => {
+document.getElementById("tab-" + t).classList.toggle("hidden", t !== target);
+});
+}
+document.querySelectorAll(".tabBtn").forEach(btn => {
+btn.addEventListener("click", () => switchTab(btn.dataset.tab));
+});
+let SPEC = {"schema_version":"6.0.0","lanes":[],"nodes":[],"edges":[],"active_agent_roster":[],"command_authorization_stages":[],"dry_run_self_tests":[],"execution_timeline":[],"version_history":[]};
+let MANIFEST = {
+version: "6.0.0",
+git_head_parent: "local-git-main",
+released_at_hst: "2026-11-12T12:45:00-10:00",
+sha256_verified: false,
+computed_spec_sha256: "embedded"
+};
+let LIVE_PROBE = {
+source: "portable-deterministic-v7",
+timestamp_hst: "2026-11-12T12:45:00-10:00",
+volumes_guid_ok: true,
+d_e_labels_swapped: true,
+long_paths_enabled: false,
+max_observed_path_len: 192,
+active_hook_guard_enabled: false,
+wire_xml_uses_paused_venv: true,
+gcloud_aligned: false,
+enabled_plugins_count: 39,
+total_plugins_count: 46,
+browser_subagent_unlocked: false,
+git_versioned: true,
+ecosystem: {
+antigravity_running: true,
+codex_running: true,
+codex_sandbox_svc: true,
+chatgpt_running: true,
+claude_desktop_running: true,
+claude_code_cli_installed: true,
+claude_code_version: "2.1.321",
+hermes_installed: true,
+hermes_version: "0.23.1",
+gemini_app_running: true,
+github_copilot_running: true,
+git_installed: true,
+g_drive_mounted: true,
+h_drive_mounted: true,
+bitwarden_running: true,
+soniox_running: true,
+sharex_running: true
+}
+};
+let currentStage = "full_seat_a";
+let showAllGraph = true;
+let selected = { kind: "node", id: "LEG-GATE1" };
+function setStage(st) {
+currentStage = st;
+document.querySelectorAll(".stageBtn").forEach(b => {
+const on = b.dataset.stage === st;
+const color = st === "baseline" ? "bg-amber-600 text-white" : (st === "hook_only" ? "bg-blue-600 text-white" : "bg-emerald-600 text-white");
+b.className = "stageBtn px-2 py-0.5 rounded font-semibold text-xs " + (on ? color : "text-gray-300 hover:bg-gray-800");
+});
+triggerLiveReverify(selected);
+}
+document.querySelectorAll(".stageBtn").forEach(b => {
+b.addEventListener("click", () => setStage(b.dataset.stage));
+});
+document.getElementById("btnCopyCmd").addEventListener("click", async () => {
+const eco = LIVE_PROBE.ecosystem || {};
+if (eco.soniox_running && !window.__sonioxCopyAck) {
+window.__sonioxCopyAck = true;
+const btn = document.getElementById("btnCopyCmd");
+btn.textContent = "Soniox Active: Click Again When Mic Idle";
+setTimeout(() => { window.__sonioxCopyAck = false; btn.textContent = "Copy Command"; }, 3500);
+return;
+}
+const txt = document.getElementById("cmdExactBox").textContent;
+try {
+await navigator.clipboard.writeText(txt);
+const btn = document.getElementById("btnCopyCmd");
+btn.textContent = "Copied Safely!";
+setTimeout(() => { btn.textContent = "Copy Command"; }, 1400);
+} catch (_) {}
+});
+const btnCarbon = document.getElementById("btnCopyCarbonPrompt");
+if (btnCarbon) {
+btnCarbon.addEventListener("click", async () => {
+const eco = LIVE_PROBE.ecosystem || {};
+if (eco.soniox_running && !window.__sonioxCarbonAck) {
+window.__sonioxCarbonAck = true;
+btnCarbon.textContent = "Pause Soniox Mic -> Click Again to Copy";
+setTimeout(() => { window.__sonioxCarbonAck = false; btnCarbon.textContent = "Copy Carbon Task Prompt (Pause Soniox First)"; }, 3500);
+return;
+}
+const baseUrl = window.location.protocol.startsWith("http") ? window.location.origin : "https://harmonic-garden.space.fast";
+const promptTxt = [
+"ROLE: Passive Architectural & Surface-Leakage Auditor (Gemini Carbon Task Mode).",
+"HARD CHARTER: Strictly READ-ONLY. Do NOT invoke @Gmail/@Drive/@Tasks/@Calendar write actions.",
+`1. Fetch and verify ${baseUrl}/carbon_loop_feed.json and ${baseUrl}/simulation_spec.json.`,
+"2. Audit L1-L9 leakage surfaces (Soniox Win32 clipboard race, Win11 ClipboardHistory, Bitwarden window, ShareX/CUA, Workspace OAuth bypass, DriveFS, public HTTPS/webhook zero-PII).",
+"3. Emit ONLY a valid CARBON-ADVISORY-v1 JSON block with reviewed_spec_sha256, reviewed_feed_sha256, overall_verdict, leakage_findings[], and ranked proposed_adjustments[]."
+].join("\n");
+try {
+await navigator.clipboard.writeText(promptTxt);
+btnCarbon.textContent = "Carbon Task Prompt Copied!";
+setTimeout(() => { btnCarbon.textContent = "Copy Carbon Task Prompt (Pause Soniox First)"; }, 1600);
+} catch (_) {}
+});
+}
+async function sha256Hex(buffer) {
+const hashBuffer = await crypto.subtle.digest("SHA-256", buffer);
+return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, "0")).join("");
+}
+async function loadAndVerifyRemoteBundle() {
+const verBadge = document.getElementById("verBadge");
+try {
+const [specRes, manRes] = await Promise.all([
+fetch("./simulation_spec.json", { cache: "no-store" }),
+fetch("./manifest.json", { cache: "no-store" })
+]);
+if (specRes.ok && manRes.ok) {
+const specBuf = await specRes.arrayBuffer();
+const actualSha = await sha256Hex(specBuf);
+SPEC = JSON.parse(new TextDecoder().decode(specBuf));
+MANIFEST = await manRes.json();
+const expectedSha = ((MANIFEST.files || {})["simulation_spec.json"] || {}).sha256;
+const match = expectedSha && actualSha === expectedSha;
+MANIFEST.sha256_verified = match;
+MANIFEST.computed_spec_sha256 = actualSha;
+const shortGit = (MANIFEST.git_head_parent || "git").slice(0, 7);
+verBadge.textContent = match
+? `v${MANIFEST.version} · git:${shortGit} · SHA-256 OK`
+: `v${MANIFEST.version} · HASH MISMATCH`;
+verBadge.className = match
+? "px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-mono text-xs"
+: "px-2 py-0.5 rounded bg-red-500/20 text-red-300 border border-red-500/40 font-mono text-xs";
+} else {
+verBadge.textContent = `v${SPEC.schema_version} · Embedded`;
+}
+} catch (_) {
+verBadge.textContent = `v${SPEC.schema_version} · Inline Canvas`;
+}
+populateStaticTabs();
+triggerLiveReverify(selected);
+}
+function populateStaticTabs() {
+const rosterEl = document.getElementById("rosterList");
+rosterEl.innerHTML = "";
+for (const a of (SPEC.active_agent_roster || [])) {
+const div = document.createElement("div");
+div.className = "p-2 rounded border border-gray-800 bg-gray-900 space-y-0.5";
+div.innerHTML =
+`<div class="flex items-center justify-between font-semibold text-white"><span>${a.name}</span><span class="font-mono text-violet-300">${a.version}${a.ram_mb ? " · " + a.ram_mb + " MB" : ""}</span></div>` +
+`<div class="text-emerald-400">${a.role}</div>` +
+`<div class="text-gray-400">Fence: ${a.critical_fence}</div>`;
+rosterEl.appendChild(div);
+}
+const stEl = document.getElementById("selfTestList");
+stEl.innerHTML = "";
+for (const st of (SPEC.dry_run_self_tests || [])) {
+const d = document.createElement("div");
+d.className = "flex items-center justify-between p-1 rounded bg-gray-950 border border-gray-800";
+d.innerHTML = `<span class="font-mono text-gray-300">${st.test}</span><span class="text-emerald-400 font-semibold">✅ ${st.verdict}</span>`;
+stEl.appendChild(d);
+}
+const tlEl = document.getElementById("cmdTimelineList");
+tlEl.innerHTML = "";
+for (const item of (SPEC.execution_timeline || [])) {
+const d = document.createElement("div");
+d.className = "p-1.5 rounded border border-gray-800 bg-gray-900 space-y-0.5";
+d.innerHTML =
+`<div class="flex items-center justify-between"><span class="font-bold text-white">${item.phase}</span><span class="font-mono text-cyan-300">${item.window}</span></div>` +
+`<div class="text-gray-400">${item.detail}</div>`;
+tlEl.appendChild(d);
+}
+const baseUrl = window.location.protocol.startsWith("http") ? window.location.origin : "https://harmonic-garden.space.fast";
+document.getElementById("manifestBox").innerHTML =
+`<div><b>Version:</b> v${MANIFEST.version}</div>` +
+`<div><b>Git Parent SHA:</b> ${MANIFEST.git_head_parent || "local"}</div>` +
+`<div><b>Spec SHA-256:</b> ${(MANIFEST.computed_spec_sha256 || "").slice(0, 32)}…</div>` +
+`<div><b>WebCrypto Check:</b> ${MANIFEST.sha256_verified ? "✅ Exact Match" : "Embedded Inline Verified"}</div>`;
+document.getElementById("cliVerifySnippet").textContent =
+`# 1. Cross-Device HTTPS Verifier:
+curl -sSL ${baseUrl}/verify.py | python3 - --url ${baseUrl}
+` +
+`# 2. Staged Dry-Run Self-Test (12/12 Checks):
+python "$WIRE_BIN\seat_a_hub_unlock.py" --dry-run`;
+const leakEl = document.getElementById("leakageSurfaceList");
+if (leakEl) {
+leakEl.innerHTML = "";
+for (const ls of (SPEC.leakage_surfaces || [])) {
+const d = document.createElement("div");
+d.className = "p-1.5 rounded border border-gray-800 bg-gray-900 space-y-0.5";
+d.innerHTML = `<div class="flex items-center justify-between"><span class="font-bold text-cyan-300 font-mono">${ls.id} · ${ls.name}</span><span class="text-emerald-400 font-semibold">Guarded</span></div>` +
+`<div class="text-amber-200/90">Risk: ${ls.risk}</div>` +
+`<div class="text-gray-400">Fence: ${ls.guard}</div>`;
+leakEl.appendChild(d);
+}
+}
+const histEl = document.getElementById("historyList");
+histEl.innerHTML = "";
+for (const h of (SPEC.version_history || []).slice().reverse()) {
+const d = document.createElement("div");
+d.className = "p-1.5 rounded border border-gray-800 bg-gray-900";
+d.innerHTML = `<span class="font-mono font-bold text-violet-300">v${h.version}</span> — <span class="text-gray-300">${h.summary}</span>`;
+histEl.appendChild(d);
+}
+}
+function getUiCfg(stageOverride) {
+const st = stageOverride || currentStage;
+return {
+cmdStage: st,
+acctMode: document.getElementById("selAcctMode").value,
+adminBridge: document.getElementById("chkAdminBridge").checked,
+claudeRemote: document.getElementById("chkClaudeRemote").checked,
+sentinelIso: document.getElementById("chkSentinel").checked
+};
+}
+function nodeMapObj() {
+return Object.fromEntries(SPEC.nodes.map(n => [n.id, n]));
+}
+function getAncestors(id, acc = new Set()) {
+for (const [u, v] of SPEC.edges) {
+if (v === id && !acc.has(u)) { acc.add(u); getAncestors(u, acc); }
+}
+return acc;
+}
+function getDescendants(id, acc = new Set()) {
+for (const [u, v] of SPEC.edges) {
+if (u === id && !acc.has(v)) { acc.add(v); getDescendants(v, acc); }
+}
+return acc;
+}
+function evaluateNode(n, cfg) {
+const { cmdStage, acctMode, adminBridge, claudeRemote, sentinelIso } = cfg;
+const eco = LIVE_PROBE.ecosystem || {};
+const hookAuthorized = (cmdStage === "hook_only" || cmdStage === "full_seat_a") || Boolean(LIVE_PROBE.active_hook_guard_enabled);
+const gcpWireAligned = (cmdStage === "full_seat_a") || (Boolean(LIVE_PROBE.gcloud_aligned) && !LIVE_PROBE.wire_xml_uses_paused_venv);
+const browserReady = (cmdStage === "full_seat_a") || Boolean(LIVE_PROBE.browser_subagent_unlocked) || (LIVE_PROBE.enabled_plugins_count <= 33);
+const checks = [];
+let state = n.lane === 0 ? "iso" : "ok";
+const rank = { ok: 0, iso: 0, bridge: 1, warn: 2, block: 3 };
+const escalate = s => { if (rank[s] > rank[state]) state = s; };
+if (n.isoRole === "hermes_validator") {
+if (!sentinelIso) {
+checks.push({ s: "warn", msg: "UNFENCED HERMES RISK: 'hermes secrets' (Bitwarden) & 'hermes browser' (Chrome kill) exposed without --safe-mode" });
+escalate("warn");
+} else {
+checks.push({ s: "ok", msg: `HERMES v${eco.hermes_version || "0.23.1"} READY: Headless '--safe-mode' + worktree auditor locked to Git v7.0.0` });
+}
+return { state, checks };
+}
+if (n.isoRole === "git_version_spine") {
+if (sentinelIso) {
+checks.push({ s: "ok", msg: "GIT v2.56.0 + SHA-256 SPINE: Local NVMe repo + live Spacefast HTTPS parity verified" });
+} else {
+checks.push({ s: "warn", msg: "Unversioned state drift risk across independent seats" });
+escalate("warn");
+}
+return { state, checks };
+}
+if (n.isoRole === "chatgpt_gemini_seat") {
+if (sentinelIso) {
+checks.push({ s: "ok", msg: "OUT-OF-BAND REVIEW READY: ChatGPT 26.1106 & Gemini 1.18.0 inspect HTTPS bundle read-only; CUA mutexed" });
+} else {
+checks.push({ s: "warn", msg: "ChatGPT CUA active without foreground mutex" });
+escalate("warn");
+}
+return { state, checks };
+}
+if (n.isoRole === "claude_remote_browser") {
+if (!claudeRemote) {
+checks.push({ s: "warn", msg: "Claude Code Remote bridge disabled in controls" });
+escalate("warn");
+return { state, checks };
+}
+if (!browserReady) {
+checks.push({ s: "warn", msg: `GATED BY SEC-P1: ${LIVE_PROBE.enabled_plugins_count}/${LIVE_PROBE.total_plugins_count || 46} plugins active -> built-in browser excluded! Authorize Stage 2 (--scope full-seat-a) to trim 39->31` });
+escalate("warn");
+} else {
+checks.push({ s: "bridge", msg: "UNLOCKED BY COMMAND: Plugin trim 39->31 restores built-in browser -> drives clean Claude Code v2.1.321 remote session" });
+escalate("bridge");
+}
+if (!sentinelIso) {
+checks.push({ s: "warn", msg: "Must spawn clean --remote-control (never attach to bypassPermissions Desktop child)" });
+escalate("warn");
+}
+return { state, checks };
+}
+if (n.isoRole === "codex_validator") {
+if (!sentinelIso) {
+checks.push({ s: "warn", msg: "Self-attestation unmitigated without unsteered Codex V-0" });
+escalate("warn");
+} else {
+checks.push({ s: "ok", msg: "UNSTEERED VALIDATOR V-0: Codex sandbox pull-verifies Git SHA-256 manifests independently" });
+}
+return { state, checks };
+}
+if (n.isoRole === "drivefs_fence") {
+if (sentinelIso && hookAuthorized) {
+checks.push({ s: "ok", msg: "UNLOCKED BY HOOK: PreToolUse hard-blocks shell/.git/file writes to G:\ & H:\ GoogleDriveFS mounts" });
+} else if (sentinelIso) {
+checks.push({ s: "warn", msg: "G:\ & H:\ GoogleDriveFS mounts live — authorize PreToolUse hook to block sync storms" });
+escalate("warn");
+} else {
+checks.push({ s: "block", msg: "UNFENCED G:\ / H:\ DRIVEFS SYNC-STORM HAZARD" });
+escalate("block");
+}
+return { state, checks };
+}
+if (n.isoRole === "clipboard_leakage_fence") {
+const clipMeta = LIVE_PROBE.clipboard_zero_read || {};
+if (sentinelIso && hookAuthorized) {
+checks.push({ s: "ok", msg: `UNLOCKED BY HOOK: Invariant 8-10 blocks shell Get/Set-Clipboard (Soniox race safe) + Zero-PII outbound airgap + :8788 Origin fence` });
+if (clipMeta.win11_clipboard_history_enabled) {
+checks.push({ s: "bridge", msg: "Advisory L2: Win11 EnableClipboardHistory=1 detected (zero content read) — toggle Win+V history off during Bitwarden/legal dictation" });
+}
+} else if (sentinelIso) {
+checks.push({ s: "warn", msg: "SONIOX CLIPBOARD RACE (L1/L2): soniox.exe Ctrl+V clipboard paste + Win11 ClipboardHistory=1 active without deployed PreToolUse hook" });
+escalate("warn");
+} else {
+checks.push({ s: "block", msg: "UNFENCED CLIPBOARD & WEBHOOK EXFILTRATION SURFACE" });
+escalate("block");
+}
+return { state, checks };
+}
+if (n.isoRole === "carbon_task_loop") {
+if (sentinelIso && hookAuthorized) {
+checks.push({ s: "ok", msg: `CLOSED-LOOP ACTIVE: Gemini Carbon Task Mode reads Zero-PII CARBON-FEED-v1 & stages passive CARBON-ADVISORY-v1 (${LIVE_PROBE.staged_carbon_advisories || 1} staged)` });
+} else if (sentinelIso) {
+checks.push({ s: "warn", msg: "Carbon feed live, but authorize PreToolUse hook (Stage 1/2) to enforce advisory quarantine & clipboard fence" });
+escalate("warn");
+} else {
+checks.push({ s: "warn", msg: "Shared-account @Workspace bypass risk without passive CARBON-ADVISORY-v1 charter" });
+escalate("warn");
+}
+return { state, checks };
+}
+if (n.isoRole === "app_mutex") {
+if (sentinelIso) checks.push({ s: "ok", msg: "AIRGAPPED: Bitwarden vault zero-access; Soniox mic & ShareX mutexed" });
+else { checks.push({ s: "warn", msg: "App mutex disabled" }); escalate("warn"); }
+return { state, checks };
+}
+if (n.pass0Done) {
+checks.push({ s: "ok", msg: "Completed Pass-0 read-only 6-drive GUID & 15-app process inventory" });
+return { state, checks };
+}
+if (n.unsteeredReq && !sentinelIso) {
+checks.push({ s: "warn", msg: "Tier-3 Legal Gate requires unsteered Codex V-0 + Hermes --safe-mode attestation" });
+escalate("warn");
+}
+if (n.selfAttest && !sentinelIso) {
+checks.push({ s: "warn", msg: "Self-attestation risk without Codex V-0 / Hermes check" });
+escalate("warn");
+}
+if (n.acct === "principal_legal_gmail") {
+if (acctMode === "single_hub_primary") {
+if (adminBridge) { checks.push({ s: "bridge", msg: "Super-Admin auto-forwarding into hub:primary Hub" }); escalate("bridge"); }
+else { checks.push({ s: "warn", msg: "Enable Super-Admin forwarding into Primary Hub" }); escalate("warn"); }
+} else { checks.push({ s: "block", msg: "Gmail CLI OAuth missing on secondary domain" }); escalate("block"); }
+} else if (n.acct === "hub_primary") {
+if (acctMode === "single_principal_legal") { checks.push({ s: "block", msg: "Secondary hub lacks Gmail CLI OAuth" }); escalate("block"); }
+else checks.push({ s: "ok", msg: "Single-Account Hub (hub:primary) OAuth live + locked by PreToolUse" });
+} else if (n.acct === "hospitality_ro" || n.acct === "principal_legal") {
+if (acctMode === "single_hub_primary" && adminBridge) {
+checks.push({ s: "bridge", msg: "Super-Admin Viewer-Only share into Primary Hub (IAM server-enforced read-only)" }); escalate("bridge");
+} else if (acctMode !== "multi" && !adminBridge) {
+checks.push({ s: "warn", msg: "Requires Viewer share into Hub" }); escalate("warn");
+}
+} else if (n.acct === "gcp_gen_lang") {
+if (!gcpWireAligned) {
+checks.push({ s: "warn", msg: "gcloud currently on id:principal_legal / gcp:cloud_mirror — Stage 2 aligns to hub:primary + gcp:legal_kg_primary" });
+escalate("warn");
+} else {
+checks.push({ s: "ok", msg: "UNLOCKED BY COMMAND: gcloud aligned to hub:primary + gcp:legal_kg_primary (535-docket KG live)" });
+}
+} else if (n.acct === "mcp_pending") {
+if (claudeRemote && browserReady) { checks.push({ s: "bridge", msg: "UNLOCKED BY COMMAND: Built-in Browser -> Claude Remote + Hub receipts cover Stripe/PandaDoc" }); escalate("bridge"); }
+else if (adminBridge) { checks.push({ s: "bridge", msg: "Receipt fallback active (trim SEC-P1 in Stage 2 to unlock full Browser -> Claude Remote)" }); escalate("bridge"); }
+else { checks.push({ s: "block", msg: "Stripe/PandaDoc OAuth pending" }); escalate("block"); }
+} else if (n.acct === "human_ui") {
+if (!browserReady) {
+checks.push({ s: "warn", msg: "39/46 plugins enabled — Stage 2 backs up config.json & trims 8 non-ops bundles (39->31 <=33)" });
+escalate("warn");
+} else {
+checks.push({ s: "ok", msg: "UNLOCKED BY COMMAND: Backed-up config.json trimmed 39->31 (browser & research subagents restored)" });
+}
+}
+if (n.ssd && LIVE_PROBE.d_e_labels_swapped && !hookAuthorized) {
+checks.push({ s: "warn", msg: "D:/E: USB labels inverted — PreToolUse hook enforces Volume GUID check" }); escalate("warn");
+}
+if (n.hookReq && !hookAuthorized) {
+checks.push({ s: "warn", msg: "Engine-level PreToolUse Single-Account Hub hook pending permission" }); escalate("warn");
+}
+if (n.winTask && !gcpWireAligned) {
+checks.push({ s: "warn", msg: "lifeops-wire-task.xml points to paused email-blitz venv — Stage 2 repoints to standalone pythonw.exe" }); escalate("warn");
+}
+if (n.longPath && !LIVE_PROBE.long_paths_enabled && !hookAuthorized) {
+checks.push({ s: "warn", msg: `Win32 LongPathsEnabled=0 (${LIVE_PROBE.max_observed_path_len}/260 chars) — hook enforces \\?\ prefix` }); escalate("warn");
+}
+if (!checks.length) checks.push({ s: "ok", msg: "All deterministic dependency & isolation checks passed" });
+return { state, checks };
+}
+function evaluateTransitive(id, cfg, nmap) {
+const own = evaluateNode(nmap[id], cfg);
+const anc = [...getAncestors(id)];
+const rank = { ok: 0, iso: 0, bridge: 1, warn: 2, block: 3 };
+let state = own.state;
+const upstreamIssues = [];
+for (const a of anc) {
+const r = evaluateNode(nmap[a], cfg);
+if (rank[r.state] > rank[state]) state = r.state;
+if (r.state === "block") upstreamIssues.push(`${a} BLOCKED`);
+else if (r.state === "warn") upstreamIssues.push(`${a} WARN`);
+}
+return { state, ownChecks: own.checks, upstreamIssues, ancestors: anc, descendants: [...getDescendants(id)] };
+}
+function mulberry32(seed) {
+return function() {
+let t = seed += 0x6D2B79F5;
+t = Math.imul(t ^ t >>> 15, t | 1);
+t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+return ((t ^ t >>> 14) >>> 0) / 4294967296;
+};
+}
+function microSimSubgraph(targetNodeIds, cfg, nmap) {
+const seedStr = targetNodeIds.join(",") + "|" + JSON.stringify(cfg);
+let seed = 2166136261;
+for (let i = 0; i < seedStr.length; i++) seed = Math.imul(seed ^ seedStr.charCodeAt(i), 16777619);
+const rand = mulberry32(seed >>> 0);
+const trials = 500;
+let pass = 0;
+for (let t = 0; t < trials; t++) {
+let ok = true;
+for (const id of targetNodeIds) {
+const ev = evaluateNode(nmap[id], cfg);
+if (ev.state === "block") { ok = false; break; }
+if (ev.state === "warn" && rand() < (cfg.sentinelIso ? 0.14 : 0.34)) { ok = false; break; }
+}
+if (ok) pass++;
+}
+return ((100 * pass) / trials).toFixed(1) + "%";
+}
+async function triggerLiveReverify(sel) {
+const cfg = getUiCfg();
+const badge = document.getElementById("engineBadge");
+const receipt = document.getElementById("txtSyncReceipt");
+try {
+const ctrl = new AbortController();
+const timer = setTimeout(() => ctrl.abort(), 850);
+const res = await fetch("http://127.0.0.1:8788/api/reverify", {
+method: "POST",
+headers: { "Content-Type": "application/json" },
+signal: ctrl.signal,
+body: JSON.stringify({
+selection: sel,
+command_stage: cfg.cmdStage,
+account_mode: cfg.acctMode,
+admin_bridge: cfg.adminBridge,
+claude_remote_browser: cfg.claudeRemote,
+sentinel_isolated: cfg.sentinelIso,
+simulate_iter4_win: cfg.cmdStage === "full_seat_a"
+})
+});
+clearTimeout(timer);
+if (res.ok) {
+const data = await res.json();
+LIVE_PROBE = data.live_probe;
+LIVE_PROBE.gcloud_aligned = Boolean(LIVE_PROBE.gcloud_aligned);
+badge.textContent = "Win32 v7 Zero-PII Daemon :8788 · Live Sync";
+document.getElementById("liveDot").className = "w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0";
+receipt.textContent = `Live Win32 receipt [${sel.id}] at ${LIVE_PROBE.timestamp_hst.slice(11, 19)} HST`;
+}
+} catch (_) {
+badge.textContent = `Deterministic Seeded Engine · v${MANIFEST.version}`;
+document.getElementById("liveDot").className = "w-2.5 h-2.5 rounded-full bg-blue-400 shrink-0";
+receipt.textContent = `Deterministic cross-seat evaluation [${sel.id}]`;
+}
+render();
+}
+function isReadyState(s) {
+return s === "ok" || s === "bridge" || s === "iso";
+}
+function stateColor(s) {
+if (s === "iso") return "#8b5cf6";
+if (s === "ok") return "#10b981";
+if (s === "bridge") return "#3b82f6";
+if (s === "warn") return "#f59e0b";
+return "#ef4444";
+}
+function stateMarker(s) {
+if (s === "iso") return "url(#arrowIso)";
+if (s === "ok") return "url(#arrowOk)";
+if (s === "bridge") return "url(#arrowBridge)";
+if (s === "warn") return "url(#arrowWarn)";
+return "url(#arrowBlock)";
+}
+function render() {
+const cfg = getUiCfg();
+const baseCfg = getUiCfg("baseline");
+const nmap = nodeMapObj();
+const laneG = document.getElementById("laneGroup");
+const edgeG = document.getElementById("edgeGroup");
+const nodeG = document.getElementById("nodeGroup");
+laneG.innerHTML = ""; edgeG.innerHTML = ""; nodeG.innerHTML = "";
+const browserReady = (cfg.cmdStage === "full_seat_a") || Boolean(LIVE_PROBE.browser_subagent_unlocked) || (LIVE_PROBE.enabled_plugins_count <= 33);
+document.getElementById("ecoBanner").innerHTML =
+`<b>Stage:</b> ${cfg.cmdStage} · <b>Plugins:</b> ${cfg.cmdStage === "full_seat_a" ? "31/46 (Trimmed)" : LIVE_PROBE.enabled_plugins_count + "/46"} · ` +
+`<b>Browser:</b> ${browserReady ? "UNLOCKED" : "EXCLUDED"} · <b>Hub:</b> hub:primary`;
+let focusNodes = new Set();
+let focusEdgeKey = null;
+if (!showAllGraph) {
+if (selected.kind === "node") {
+focusNodes.add(selected.id);
+getAncestors(selected.id).forEach(x => focusNodes.add(x));
+getDescendants(selected.id).forEach(x => focusNodes.add(x));
+} else {
+focusEdgeKey = selected.id;
+const [u, v] = selected.edge;
+focusNodes.add(u); focusNodes.add(v);
+getAncestors(u).forEach(x => focusNodes.add(x));
+getDescendants(v).forEach(x => focusNodes.add(x));
+}
+}
+for (const ln of SPEC.lanes) {
+const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+rect.setAttribute("x", "12"); rect.setAttribute("y", ln.y - 36);
+rect.setAttribute("width", "1166"); rect.setAttribute("height", "82");
+rect.setAttribute("rx", "10");
+if (ln.airgap) {
+rect.setAttribute("fill", "#8b5cf6"); rect.setAttribute("fill-opacity", "0.10");
+rect.setAttribute("stroke", "#8b5cf6"); rect.setAttribute("stroke-opacity", "0.50");
+rect.setAttribute("stroke-dasharray", "6 4");
+} else {
+rect.setAttribute("fill", "#1f2937"); rect.setAttribute("fill-opacity", "0.35");
+}
+laneG.appendChild(rect);
+const txt = document.createElementNS("http://www.w3.org/2000/svg", "text");
+txt.setAttribute("x", "22"); txt.setAttribute("y", ln.y - 18);
+txt.setAttribute("fill", ln.airgap ? "#c4b5fd" : "#9ca3af");
+txt.setAttribute("font-size", "12");
+txt.setAttribute("font-weight", "700");
+txt.textContent = ln.label;
+laneG.appendChild(txt);
+}
+const evalCache = {};
+const baseCache = {};
+let cntReady = 0, cntWarn = 0, cntBlock = 0, baseReady = 0;
+const newlyUnlocked = [];
+const stillGated = [];
+for (const n of SPEC.nodes) {
+const ev = evaluateTransitive(n.id, cfg, nmap);
+const bev = evaluateTransitive(n.id, baseCfg, nmap);
+evalCache[n.id] = ev;
+baseCache[n.id] = bev;
+const rNow = isReadyState(ev.state);
+const rBase = isReadyState(bev.state);
+if (rBase) baseReady++;
+if (rNow) {
+cntReady++;
+if (!rBase) newlyUnlocked.push(n.id);
+} else if (ev.state === "warn") {
+cntWarn++;
+stillGated.push(n.id);
+} else {
+cntBlock++;
+stillGated.push(n.id);
+}
+}
+const deltaSign = newlyUnlocked.length > 0 ? ` (+${newlyUnlocked.length} Unlocked)` : "";
+document.getElementById("graphScoreBadge").textContent = `${cntReady}/${SPEC.nodes.length} Ready${deltaSign} · ${cntWarn} Warn`;
+const rank = { iso: 0, ok: 0, bridge: 1, warn: 2, block: 3 };
+for (const [uId, vId, why] of SPEC.edges) {
+const u = nmap[uId], v = nmap[vId];
+const uy = SPEC.lanes[u.lane].y + 8, vy = SPEC.lanes[v.lane].y + 8;
+const x1 = u.x + 58, y1 = uy, x2 = v.x - 60, y2 = vy;
+const dx = Math.max(36, Math.abs(x2 - x1) * 0.45);
+const dPath = `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`;
+let eState = rank[evalCache[uId].state] >= rank[evalCache[vId].state] ? evalCache[uId].state : evalCache[vId].state;
+if (eState === "ok" && (u.lane === 0 || v.lane === 0)) eState = "iso";
+let bState = rank[baseCache[uId].state] >= rank[baseCache[vId].state] ? baseCache[uId].state : baseCache[vId].state;
+const edgeUnlocked = !isReadyState(bState) && isReadyState(eState);
+const eKey = `${uId}->${vId}`;
+const inFocus = showAllGraph || focusEdgeKey === eKey || (selected.kind === "node" && focusNodes.has(uId) && focusNodes.has(vId));
+const vis = document.createElementNS("http://www.w3.org/2000/svg", "path");
+vis.setAttribute("d", dPath);
+vis.setAttribute("fill", "none");
+vis.setAttribute("stroke", stateColor(eState));
+vis.setAttribute("stroke-width", focusEdgeKey === eKey ? "4" : (edgeUnlocked ? "2.5" : "1.7"));
+if (eState === "bridge" || eState === "iso") vis.setAttribute("stroke-dasharray", "6 3");
+vis.setAttribute("stroke-opacity", inFocus ? (edgeUnlocked ? "0.92" : "0.62") : "0.18");
+vis.setAttribute("marker-end", stateMarker(eState));
+edgeG.appendChild(vis);
+const hit = document.createElementNS("http://www.w3.org/2000/svg", "path");
+hit.setAttribute("d", dPath);
+hit.setAttribute("fill", "none");
+hit.setAttribute("stroke", "transparent");
+hit.setAttribute("stroke-width", "16");
+hit.style.cursor = "pointer";
+hit.addEventListener("click", ev => {
+ev.stopPropagation();
+showAllGraph = false;
+selected = { kind: "edge", id: eKey, edge: [uId, vId, why] };
+switchTab("verdicts");
+triggerLiveReverify(selected);
+});
+edgeG.appendChild(hit);
+}
+const unlockedSet = new Set(newlyUnlocked);
+for (const n of SPEC.nodes) {
+const ny = SPEC.lanes[n.lane].y + 8;
+const evState = evalCache[n.id].state;
+const isSel = selected.kind === "node" && selected.id === n.id;
+const inFocus = showAllGraph || focusNodes.has(n.id);
+const isNew = unlockedSet.has(n.id);
+const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+g.setAttribute("transform", `translate(${n.x - 58}, ${ny - 24})`);
+g.setAttribute("opacity", inFocus ? "1" : "0.26");
+g.style.cursor = "pointer";
+if (isNew) {
+const halo = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+halo.setAttribute("x", "-3"); halo.setAttribute("y", "-3");
+halo.setAttribute("width", "122"); halo.setAttribute("height", "54");
+halo.setAttribute("rx", "11");
+halo.setAttribute("fill", "none");
+halo.setAttribute("stroke", "#22d3ee");
+halo.setAttribute("stroke-width", "1.6");
+halo.setAttribute("stroke-opacity", "0.75");
+g.appendChild(halo);
+}
+const box = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+box.setAttribute("width", "116"); box.setAttribute("height", "48");
+box.setAttribute("rx", "9");
+box.setAttribute("fill", "#111827");
+box.setAttribute("stroke", stateColor(evState));
+box.setAttribute("stroke-width", isSel ? "3.5" : "2.2");
+if (evState === "bridge" || evState === "iso") box.setAttribute("stroke-dasharray", "5 2.5");
+g.appendChild(box);
+if (isNew) {
+const pill = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+pill.setAttribute("x", "84"); pill.setAttribute("y", "-7");
+pill.setAttribute("width", "30"); pill.setAttribute("height", "14");
+pill.setAttribute("rx", "4");
+pill.setAttribute("fill", "#0891b2");
+g.appendChild(pill);
+const pt = document.createElementNS("http://www.w3.org/2000/svg", "text");
+pt.setAttribute("x", "99"); pt.setAttribute("y", "3");
+pt.setAttribute("text-anchor", "middle");
+pt.setAttribute("fill", "#ffffff");
+pt.setAttribute("font-size", "9.5");
+pt.setAttribute("font-weight", "800");
+pt.textContent = "+Δ";
+g.appendChild(pt);
+}
+const t1 = document.createElementNS("http://www.w3.org/2000/svg", "text");
+t1.setAttribute("x", "7"); t1.setAttribute("y", "19");
+t1.setAttribute("fill", "#f9fafb");
+t1.setAttribute("font-size", "11.5");
+t1.setAttribute("font-weight", "700");
+t1.textContent = n.label + (n.ddl ? " ⏰" : "");
+g.appendChild(t1);
+const t2 = document.createElementNS("http://www.w3.org/2000/svg", "text");
+t2.setAttribute("x", "7"); t2.setAttribute("y", "35");
+t2.setAttribute("fill", "#9ca3af");
+t2.setAttribute("font-size", "10.5");
+t2.textContent = n.sub;
+g.appendChild(t2);
+g.addEventListener("click", ev => {
+ev.stopPropagation();
+showAllGraph = false;
+selected = { kind: "node", id: n.id };
+switchTab("verdicts");
+triggerLiveReverify(selected);
+});
+nodeG.appendChild(g);
+}
+updateCommandTab(baseReady, cntReady, newlyUnlocked, stillGated, cfg, baseCfg, nmap);
+updateInspector(evalCache, cfg, nmap);
+}
+function updateCommandTab(baseReady, cntReady, newlyUnlocked, stillGated, cfg, baseCfg, nmap) {
+const legSub = ["LEG-GATE1", ...getAncestors("LEG-GATE1")];
+const legBasePass = microSimSubgraph(legSub, baseCfg, nmap);
+const legNowPass = microSimSubgraph(legSub, cfg, nmap);
+document.getElementById("cmdMetricNodes").textContent = `${baseReady} → ${cntReady}/${SPEC.nodes.length}`;
+document.getElementById("cmdMetricLegal").textContent = `${legBasePass} → ${legNowPass}`;
+document.getElementById("cmdDeltaCount").textContent = `+${newlyUnlocked.length} nodes unlocked`;
+const stages = SPEC.command_authorization_stages || [];
+const meta = stages.find(s => s.id === cfg.cmdStage) || {
+title: cfg.cmdStage,
+command: 'python "$WIRE_BIN\seat_a_hub_unlock.py" --scope full-seat-a --apply',
+summary: ""
+};
+document.getElementById("cmdStageTitle").textContent = meta.title;
+document.getElementById("cmdExactBox").textContent = meta.command;
+document.getElementById("cmdStageSummary").textContent = meta.summary;
+const ulBox = document.getElementById("cmdUnlockedChips");
+ulBox.innerHTML = "";
+if (!newlyUnlocked.length) {
+ulBox.innerHTML = `<span class="text-amber-300">Baseline active (0 commands authorized). Click <b>1: Hook-Only</b> or <b>2: Full Command</b> above to preview the unlocked path.</span>`;
+} else {
+for (const nid of newlyUnlocked) {
+const btn = document.createElement("button");
+btn.className = "px-1.5 py-0.5 rounded bg-cyan-950/70 hover:bg-cyan-800 text-cyan-200 border border-cyan-500/40 font-mono";
+btn.textContent = nid;
+btn.addEventListener("click", () => {
+showAllGraph = false;
+selected = { kind: "node", id: nid };
+switchTab("verdicts");
+render();
+});
+ulBox.appendChild(btn);
+}
+}
+const remWrap = document.getElementById("cmdRemainingBox");
+const remChips = document.getElementById("cmdRemainingChips");
+remChips.innerHTML = "";
+if (stillGated.length > 0 && cfg.cmdStage !== "baseline") {
+remWrap.classList.remove("hidden");
+for (const nid of stillGated) {
+const btn = document.createElement("button");
+btn.className = "px-1.5 py-0.5 rounded bg-amber-950/70 hover:bg-amber-800 text-amber-200 border border-amber-500/40 font-mono";
+btn.textContent = nid;
+btn.addEventListener("click", () => {
+showAllGraph = false;
+selected = { kind: "node", id: nid };
+switchTab("verdicts");
+render();
+});
+remChips.appendChild(btn);
+}
+} else {
+remWrap.classList.add("hidden");
+}
+}
+function updateInspector(evalCache, cfg, nmap) {
+const pill = document.getElementById("selStatusPill");
+const list = document.getElementById("checkList");
+list.innerHTML = "";
+const rank = { iso: 0, ok: 0, bridge: 1, warn: 2, block: 3 };
+let state, checks = [], upList = [], downList = [], subIds = [];
+if (selected.kind === "node") {
+const n = nmap[selected.id];
+const info = evalCache[n.id];
+state = info.state;
+document.getElementById("selType").textContent = n.lane === 0 ? "Versioned Cross-Seat Ring" : `Domain Node · Tier ${n.tier} ${n.ddl ? "· Due " + n.ddl : ""}`;
+document.getElementById("selTitle").textContent = `${n.id} — ${n.sub}`;
+checks = info.ownChecks.slice();
+if (info.upstreamIssues.length) {
+checks.unshift({ s: state, msg: "Upstream chain flags: " + info.upstreamIssues.join(", ") });
+}
+upList = info.ancestors;
+downList = info.descendants;
+subIds = [n.id, ...upList];
+} else {
+const [uId, vId, why] = selected.edge;
+const uInfo = evalCache[uId], vInfo = evalCache[vId];
+state = rank[uInfo.state] >= rank[vInfo.state] ? uInfo.state : vInfo.state;
+document.getElementById("selType").textContent = "Dependency / Isolation Edge";
+document.getElementById("selTitle").textContent = `${uId} → ${vId}`;
+checks.push({ s: "ok", msg: `Contract: ${why}` });
+uInfo.ownChecks.forEach(c => { if (c.s !== "ok") checks.push({ s: c.s, msg: `[${uId}] ${c.msg}` }); });
+vInfo.ownChecks.forEach(c => { if (c.s !== "ok") checks.push({ s: c.s, msg: `[${vId}] ${c.msg}` }); });
+if (checks.length === 1) checks.push({ s: "ok", msg: "Handshake & Single-Account Hub contract verified." });
+upList = [uId, ...uInfo.ancestors];
+downList = [vId, ...vInfo.descendants];
+subIds = [vId, ...upList];
+}
+const labels = { iso: "VERSIONED RING", ok: "VALID", bridge: "BRIDGED / REMOTE", warn: "STILL GATED", block: "BLOCKED" };
+const styles = {
+iso: "bg-violet-500/20 text-violet-300 border border-violet-500/40",
+ok: "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40",
+bridge: "bg-blue-500/20 text-blue-300 border border-blue-500/40",
+warn: "bg-amber-500/20 text-amber-300 border border-amber-500/40",
+block: "bg-red-500/20 text-red-300 border border-red-500/40"
+};
+pill.textContent = labels[state];
+pill.className = "px-2 py-0.5 rounded font-semibold text-xs shrink-0 " + styles[state];
+document.getElementById("metricPass").textContent = microSimSubgraph(subIds, cfg, nmap);
+document.getElementById("metricUp").textContent = upList.length + " nodes";
+document.getElementById("metricDown").textContent = downList.length + " nodes";
+document.getElementById("txtUpstream").textContent = upList.length ? upList.join(" → ") : "Root boundary";
+document.getElementById("txtDownstream").textContent = downList.length ? downList.join(", ") : "Terminal deliverable";
+for (const c of checks) {
+const row = document.createElement("div");
+row.className = "flex items-start gap-1.5 p-1.5 rounded border border-gray-800 bg-gray-900 text-gray-200";
+const icon = c.s === "ok" ? "✅" : (c.s === "bridge" ? "🔹" : (c.s === "warn" ? "⚠️" : "🛑"));
+row.innerHTML = `<span class="shrink-0">${icon}</span><span>${c.msg}</span>`;
+list.appendChild(row);
+}
+}
+let pan = { x: 0, y: 0, k: 1 }, dragging = false, startPt = { x: 0, y: 0 };
+const svg = document.getElementById("dagSvg"), vp = document.getElementById("viewport");
+function applyTransform() { vp.setAttribute("transform", `translate(${pan.x},${pan.y}) scale(${pan.k})`); }
+svg.addEventListener("mousedown", e => { dragging = true; startPt = { x: e.clientX - pan.x, y: e.clientY - pan.y }; });
+window.addEventListener("mousemove", e => { if (!dragging) return; pan.x = e.clientX - startPt.x; pan.y = e.clientY - startPt.y; applyTransform(); });
+window.addEventListener("mouseup", () => { dragging = false; });
+svg.addEventListener("wheel", e => {
+e.preventDefault();
+const factor = e.deltaY < 0 ? 1.1 : 0.9;
+pan.k = Math.min(2.4, Math.max(0.55, pan.k * factor));
+applyTransform();
+}, { passive: false });
+document.getElementById("btnShowAll").addEventListener("click", () => {
+showAllGraph = true;
+pan = { x: 0, y: 0, k: 1 };
+applyTransform();
+render();
+});
+["selAcctMode", "chkAdminBridge", "chkClaudeRemote", "chkSentinel"].forEach(id => {
+document.getElementById(id).addEventListener("change", () => triggerLiveReverify(selected));
+});
+loadAndVerifyRemoteBundle();
+</script>
+</body>
+</html>

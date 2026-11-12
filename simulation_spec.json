@@ -1,0 +1,991 @@
+{
+  "schema_version": "7.0.0",
+  "artifact_id": "highres-multi-agent-isolation-dag",
+  "released_at_hst": "2026-11-12T13:30:29-10:00",
+  "version_history": [
+    {
+      "version": "1.0.0",
+      "summary": "Initial 23-node LifeOps & Appellate 6-lane DAG + 3,000-run Monte Carlo baseline"
+    },
+    {
+      "version": "2.0.0",
+      "summary": "Added Single-Account Hub (hub:primary) + Workspace Super-Admin Viewer/Forwarding airgap"
+    },
+    {
+      "version": "3.0.0",
+      "summary": "Added Seat-Blindness B1-B5 model, 15-app tray audit, GoogleDriveFS G:/H: fence & Codex V-0"
+    },
+    {
+      "version": "4.0.0",
+      "summary": "Added Antigravity built-in browser -> Claude Code v2.1.321 Remote Sessions (SEC-P1 & bypassPermissions gates)"
+    },
+    {
+      "version": "5.0.0",
+      "summary": "Added Hermes v0.23.1 (--safe-mode/moa/worktree), ChatGPT 26.1106, Gemini 1.18.0, Git/GitHub v2.56.0 version spine & multi-device hosted verifier"
+    },
+    {
+      "version": "6.0.0",
+      "summary": "Interactive Single-Command Permission Unlocker (Stage 0 Baseline 2/30 -> Stage 1 Hook-Only 20/30 -> Stage 2 Full Seat-A Unlock 30/30 + 8/8 Dry-Run Guard)"
+    },
+    {
+      "version": "7.0.0",
+      "summary": "Added Gemini App Carbon Task-Mode Closed-Loop Auditor (CARBON-LOOP), Soniox/Win32 Clipboard & 9-Surface Leakage Sentinel (FENCE-CLIP), 12/12 PreToolUse Guard, Loopback CORS Origin Fence & Zero-PII Public Airgap"
+    }
+  ],
+  "command_authorization_stages": [
+    {
+      "id": "baseline",
+      "title": "Stage 0 \u00b7 Live Baseline (Before Permission)",
+      "command": "python \"$WIRE_BIN/seat_a_hub_unlock.py\" --dry-run",
+      "ready_nodes": 2,
+      "unblocked_delta": 0,
+      "summary": "Read-only baseline: FENCE-GH, FENCE-CLIP, and SEC-P2 have no deployed hooks.json yet, holding 30/32 downstream nodes in WARN while Soniox clipboard history remains guarded only by process discipline."
+    },
+    {
+      "id": "hook_only",
+      "title": "Stage 1 \u00b7 Hook-Only Command (--scope hook-only)",
+      "command": "python \"$WIRE_BIN/seat_a_hub_unlock.py\" --scope hook-only --apply",
+      "ready_nodes": 21,
+      "unblocked_delta": 19,
+      "summary": "Activates $AGY_CONFIG_ROOT/config/hooks.json (10 invariants: hub:primary lock, Soniox/Win32 clipboard zero-touch block, Outbound Zero-PII POST block, Carbon advisory quarantine, D:/E: GUID check, G:/H: DriveFS block, Hermes vault/Chrome fence). Unblocks +19 nodes (21/32 Ready)."
+    },
+    {
+      "id": "full_seat_a",
+      "title": "Stage 2 (Recommended) \u00b7 Full Single-Command Seat-A Unlock (--scope full-seat-a)",
+      "command": "python \"$WIRE_BIN/seat_a_hub_unlock.py\" --scope full-seat-a --apply",
+      "ready_nodes": 32,
+      "unblocked_delta": 30,
+      "summary": "One atomic, SHA-256-backed non-admin command: deploys 10-invariant PreToolUse hook + aligns gcloud to hub:primary/gcp:legal_kg_primary + repoints wire XML to standalone pythonw.exe + trims 8 non-ops plugins (39->31 <=33). Unlocks all 32/32 nodes including CARBON-LOOP & FENCE-CLIP, pausing strictly at Human + Codex V-0 + Hermes LEG-GATE1."
+    }
+  ],
+  "dry_run_self_tests": [
+    {
+      "test": "unprefixed_gmail_auto_hub_lock",
+      "verdict": "ALLOW + OVERWRITE hub:primary",
+      "passed": true
+    },
+    {
+      "test": "wrong_account_override_blocked",
+      "verdict": "DENY (Single-Hub Lock)",
+      "passed": true
+    },
+    {
+      "test": "frozen_archive_identity_blocked",
+      "verdict": "DENY (Frozen Identity)",
+      "passed": true
+    },
+    {
+      "test": "paused_legacy_automation_blocked",
+      "verdict": "DENY (Paused Automation)",
+      "passed": true
+    },
+    {
+      "test": "drivefs_g_mount_write_blocked",
+      "verdict": "DENY (G:/H: Sync-Storm Fence)",
+      "passed": true
+    },
+    {
+      "test": "swapped_d_drive_letter_write_blocked",
+      "verdict": "DENY (Inverted USB Label)",
+      "passed": true
+    },
+    {
+      "test": "hermes_secrets_bitwarden_blocked",
+      "verdict": "DENY (Vault Airgap)",
+      "passed": true
+    },
+    {
+      "test": "hermes_browser_chrome_kill_blocked",
+      "verdict": "DENY (21-Proc Chrome Protect)",
+      "passed": true
+    },
+    {
+      "test": "soniox_clipboard_read_scrape_blocked",
+      "verdict": "DENY (L1/L3 Clipboard Scrape)",
+      "passed": true
+    },
+    {
+      "test": "soniox_clipboard_write_race_blocked",
+      "verdict": "DENY (L1 Soniox Paste Race)",
+      "passed": true
+    },
+    {
+      "test": "unredacted_webhook_post_exfil_blocked",
+      "verdict": "DENY (L8 Outbound Zero-PII)",
+      "passed": true
+    },
+    {
+      "test": "carbon_advisory_direct_exec_quarantined",
+      "verdict": "DENY (L5 Passive Quarantine)",
+      "passed": true
+    }
+  ],
+  "execution_timeline": [
+    {
+      "window": "T+00m\u201305m",
+      "phase": "1. Seat-A Atomic Lock",
+      "nodes": [
+        "SEC-P1",
+        "SEC-P2",
+        "SEC-P3",
+        "FENCE-GH"
+      ],
+      "detail": "Backup configs, activate PreToolUse hook, align gcloud + wire, trim 39->31 plugins (unlocks built-in Browser -> Claude Remote)."
+    },
+    {
+      "window": "T+05m\u201318m",
+      "phase": "2. Parallel LifeOps Passes",
+      "nodes": [
+        "EML-P0-SLV",
+        "EML-P1",
+        "EML-P4",
+        "TS-P2",
+        "TS-P5",
+        "FIN-P4"
+      ],
+      "detail": "Read-only 318-thread Gmail triage, 2-yr Waikiki Studios occupancy BI, and statement/tax reconciliation."
+    },
+    {
+      "window": "T+18m\u201332m",
+      "phase": "3. 535-Docket BigQuery KG & Master Graph",
+      "nodes": [
+        "DEV-P3-BQ",
+        "DEV-P3-REP",
+        "FIN-P1-MCP",
+        "DEV-P5"
+      ],
+      "detail": "Verify 535 appellate docket foreign keys in BigQuery, bridge receipt portals via Claude Remote, emit unified LifeOps graph."
+    },
+    {
+      "window": "T+32m\u201348m",
+      "phase": "4. Appellate Brief Citation Hashing",
+      "nodes": [
+        "LEG-P0",
+        "LEG-WO1",
+        "REM-CC",
+        "VER-GIT"
+      ],
+      "detail": "Run verify_legal_doc.py SHA-256 citation audit on Nov 16 brief + Opus 5.5 remote co-review, commit receipts to Git."
+    },
+    {
+      "window": "T+48m\u201355m",
+      "phase": "5. Unsteered Multi-Agent Gate -> Human Sign-Off",
+      "nodes": [
+        "VAL-CDX",
+        "VAL-HRM",
+        "LEG-GATE1",
+        "LEG-WO45"
+      ],
+      "detail": "Codex V-0 + Hermes v0.23.1 (--safe-mode) pull-verify Git SHA-256 bundle and pause cleanly at LEG-GATE1 for your filing approval."
+    }
+  ],
+  "active_agent_roster": [
+    {
+      "id": "antigravity",
+      "name": "Google Antigravity IDE (Seat A)",
+      "version": "Live Session",
+      "ram_mb": 6683,
+      "role": "Primary Orchestrator & PreToolUse Hook Host",
+      "critical_fence": "39/46 plugins enabled currently excludes built-in browser & research subagents until trimmed <=33 (SEC-P1)"
+    },
+    {
+      "id": "codex",
+      "name": "OpenAI Codex + Windows Sandbox Service",
+      "version": "26.1111 / Sandbox",
+      "ram_mb": 735,
+      "role": "Unsteered Pull-Only Deterministic Validator (VAL-CDX / V-0)",
+      "critical_fence": "Reads versioned Git/manifest bundles directly from disk or HTTPS; zero prompt steering from Seat A"
+    },
+    {
+      "id": "chatgpt",
+      "name": "OpenAI ChatGPT Desktop + CUA Node",
+      "version": "26.1106.6628.0",
+      "ram_mb": 3588,
+      "role": "Interactive Cross-Seat Reviewer (SEAT-GPT)",
+      "critical_fence": "Fence cua_node computer-use away from Soniox mic & ShareX foreground capture"
+    },
+    {
+      "id": "claude_code",
+      "name": "Anthropic Claude Desktop + Claude Code CLI",
+      "version": "Desktop 5.1231.2 / CLI 2.1.321",
+      "ram_mb": 5122,
+      "role": "Browser-Driven Remote Co-Worker (--remote-control / claude.ai/code) (REM-CC)",
+      "critical_fence": "Resident Desktop child runs --allow-dangerously-skip-permissions + CUA; browser must spawn clean --remote-control"
+    },
+    {
+      "id": "hermes",
+      "name": "Nous Research Hermes Agent (CLI + ACP + Electron)",
+      "version": "0.23.1 (Python 3.14.9)",
+      "ram_mb": 0,
+      "role": "CLI/ACP Mixture-of-Agents & Git Worktree Auditor (VAL-HRM)",
+      "critical_fence": "Run strictly with --safe-mode; HARD-BAN 'hermes secrets' (Bitwarden!) & 'hermes browser' (Chrome kill!) & '--yolo'"
+    },
+    {
+      "id": "gemini_app",
+      "name": "Google Gemini Windows App (Carbon Task Mode)",
+      "version": "app-1.18.0 \u00b7 Carbon",
+      "ram_mb": 20,
+      "role": "Closed-Loop Architectural & Leakage Auditor (CARBON-LOOP)",
+      "critical_fence": "Ingests Zero-PII CARBON-FEED-v1 on-prompt or scheduled/webhook; emits passive CARBON-ADVISORY-v1 only (zero @Workspace mutations)"
+    },
+    {
+      "id": "github_git",
+      "name": "Git v2.56.0 + GitHub Copilot Desktop + gh CLI",
+      "version": "git 2.56.0 / Copilot 287 MB",
+      "ram_mb": 287,
+      "role": "Cryptographic Version Spine & Worktree Broker (VER-GIT)",
+      "critical_fence": "core.longpaths=true active; keep .git strictly on local NVMe (never G:/H: DriveFS)"
+    }
+  ],
+  "lanes": [
+    {
+      "id": "isolated_ring",
+      "label": "0. Versioned Cross-Seat & Leakage Ring (FENCE-CLIP \u00b7 Git \u00b7 Gemini Carbon Loop \u00b7 Codex V-0 \u00b7 Hermes \u00b7 Claude Remote)",
+      "y": 55,
+      "airgap": true
+    },
+    {
+      "id": "security_station",
+      "label": "1. Antigravity Seat-A Foundation, Plugin Trim & PreToolUse Hooks",
+      "y": 165,
+      "airgap": false
+    },
+    {
+      "id": "email",
+      "label": "2. Email Triage Pipeline (Strict Read-Only)",
+      "y": 270,
+      "airgap": false
+    },
+    {
+      "id": "tropical_bi",
+      "label": "3. Hospitality BI Pipeline (Viewer-Only Airgap)",
+      "y": 375,
+      "airgap": false
+    },
+    {
+      "id": "finance_tax",
+      "label": "4. Money, Tax & Vendor Reconciliation",
+      "y": 480,
+      "airgap": false
+    },
+    {
+      "id": "cloud_kg",
+      "label": "5. Cloud Infrastructure, MCPs & 535-Docket BigQuery KG",
+      "y": 585,
+      "airgap": false
+    },
+    {
+      "id": "legal_last",
+      "label": "6. Appellate Legal Pipeline (Unsteered Multi-Agent Gate)",
+      "y": 690,
+      "airgap": false
+    }
+  ],
+  "nodes": [
+    {
+      "id": "FENCE-APP",
+      "lane": 0,
+      "x": 72,
+      "label": "FENCE-APP",
+      "sub": "Vault+Mic+Capture",
+      "acct": "iso_fence",
+      "isoRole": "app_mutex",
+      "tier": 0
+    },
+    {
+      "id": "FENCE-CLIP",
+      "lane": 0,
+      "x": 202,
+      "label": "FENCE-CLIP",
+      "sub": "Soniox+9-Surf",
+      "acct": "iso_fence",
+      "isoRole": "clipboard_leakage_fence",
+      "tier": 0
+    },
+    {
+      "id": "FENCE-GH",
+      "lane": 0,
+      "x": 332,
+      "label": "FENCE-G:/H:",
+      "sub": "DriveFS No-Write",
+      "acct": "iso_fence",
+      "isoRole": "drivefs_fence",
+      "tier": 0
+    },
+    {
+      "id": "VER-GIT",
+      "lane": 0,
+      "x": 462,
+      "label": "VER-GIT",
+      "sub": "Git 2.56+SHA256",
+      "acct": "git_spine",
+      "isoRole": "git_version_spine",
+      "tier": 0
+    },
+    {
+      "id": "CARBON-LOOP",
+      "lane": 0,
+      "x": 592,
+      "label": "CARBON-LOOP",
+      "sub": "Gemini Task Audit",
+      "acct": "iso_validator",
+      "isoRole": "carbon_task_loop",
+      "tier": 0
+    },
+    {
+      "id": "SEAT-GPT",
+      "lane": 0,
+      "x": 722,
+      "label": "GPT+GEMINI",
+      "sub": "Desktop/Mobile RO",
+      "acct": "iso_seat",
+      "isoRole": "chatgpt_gemini_seat",
+      "tier": 0
+    },
+    {
+      "id": "REM-CC",
+      "lane": 0,
+      "x": 852,
+      "label": "REM-CLAUDE",
+      "sub": "Browser->Remote2.1",
+      "acct": "claude_remote",
+      "isoRole": "claude_remote_browser",
+      "tier": 0
+    },
+    {
+      "id": "VAL-HRM",
+      "lane": 0,
+      "x": 982,
+      "label": "HERMES 0.23",
+      "sub": "SafeMode+Worktree",
+      "acct": "iso_validator",
+      "isoRole": "hermes_validator",
+      "tier": 0
+    },
+    {
+      "id": "VAL-CDX",
+      "lane": 0,
+      "x": 1112,
+      "label": "CODEX V-0",
+      "sub": "Sandbox Pull-Judge",
+      "acct": "iso_validator",
+      "isoRole": "codex_validator",
+      "tier": 0
+    },
+    {
+      "id": "SEC-P0",
+      "lane": 1,
+      "x": 145,
+      "label": "SEC-P0",
+      "sub": "6-Drive+App Map",
+      "acct": "local_ssd",
+      "pass0Done": true,
+      "tier": 0
+    },
+    {
+      "id": "SEC-P1",
+      "lane": 1,
+      "x": 375,
+      "label": "SEC-P1",
+      "sub": "Trim <=33 (Browser)",
+      "acct": "human_ui",
+      "ctx": true,
+      "tier": 0
+    },
+    {
+      "id": "SEC-P2",
+      "lane": 1,
+      "x": 620,
+      "label": "SEC-P2",
+      "sub": "cmd PreToolUse",
+      "acct": "local_ssd",
+      "ssd": true,
+      "hookReq": true,
+      "tier": 1
+    },
+    {
+      "id": "SEC-P3",
+      "lane": 1,
+      "x": 875,
+      "label": "SEC-P3",
+      "sub": "Wire + GCP Route",
+      "acct": "gcp_gen_lang",
+      "hookReq": true,
+      "gcp": true,
+      "winTask": true,
+      "tier": 1
+    },
+    {
+      "id": "EML-P0-SLV",
+      "lane": 2,
+      "x": 250,
+      "label": "EML-HUB",
+      "sub": "Pass0 hub:primary",
+      "acct": "hub_primary",
+      "hookReq": true,
+      "agyShim": true,
+      "tier": 0
+    },
+    {
+      "id": "EML-P0-MH",
+      "lane": 2,
+      "x": 455,
+      "label": "EML-OPS",
+      "sub": "Pass0 ops:domain",
+      "acct": "principal_legal_gmail",
+      "hookReq": true,
+      "agyShim": true,
+      "blindFwd": true,
+      "tier": 0
+    },
+    {
+      "id": "EML-P1",
+      "lane": 2,
+      "x": 655,
+      "label": "EML-P1",
+      "sub": "Shard Classify",
+      "acct": "hub_primary",
+      "hookReq": true,
+      "agyShim": true,
+      "tier": 0
+    },
+    {
+      "id": "EML-P2",
+      "lane": 2,
+      "x": 855,
+      "label": "EML-P2",
+      "sub": "Entities/Dates",
+      "acct": "hub_primary",
+      "hookReq": true,
+      "longPath": true,
+      "splitRisk": true,
+      "tier": 1
+    },
+    {
+      "id": "EML-P4",
+      "lane": 2,
+      "x": 1055,
+      "label": "EML-P4",
+      "sub": "Drafts Stage",
+      "acct": "hub_primary",
+      "hookReq": true,
+      "longPath": true,
+      "selfAttest": true,
+      "tier": 1
+    },
+    {
+      "id": "TS-P0",
+      "lane": 3,
+      "x": 345,
+      "label": "TS-P0",
+      "sub": "Hospitality RO",
+      "acct": "hospitality_ro",
+      "hookReq": true,
+      "agyShim": true,
+      "blindFwd": true,
+      "tier": 0
+    },
+    {
+      "id": "TS-P2",
+      "lane": 3,
+      "x": 655,
+      "label": "TS-P2",
+      "sub": "2Yr Occupancy",
+      "acct": "hospitality_ro",
+      "hookReq": true,
+      "agyShim": true,
+      "tier": 1
+    },
+    {
+      "id": "TS-P5",
+      "lane": 3,
+      "x": 965,
+      "label": "TS-P5",
+      "sub": "BI Snapshot",
+      "acct": "hospitality_ro",
+      "hookReq": true,
+      "longPath": true,
+      "selfAttest": true,
+      "tier": 1
+    },
+    {
+      "id": "FIN-P0",
+      "lane": 4,
+      "x": 345,
+      "label": "FIN-P0",
+      "sub": "Sheets/Drive RO",
+      "acct": "principal_legal",
+      "hookReq": true,
+      "agyShim": true,
+      "drivefsHazard": true,
+      "tier": 0
+    },
+    {
+      "id": "FIN-P1-MCP",
+      "lane": 4,
+      "x": 635,
+      "label": "FIN-MCP",
+      "sub": "Stripe/PandaDoc",
+      "acct": "mcp_pending",
+      "hookReq": true,
+      "webPortal": true,
+      "tier": 0
+    },
+    {
+      "id": "FIN-P4",
+      "lane": 4,
+      "x": 925,
+      "label": "FIN-P4",
+      "sub": "Tax/Bank Flags",
+      "acct": "principal_legal",
+      "ctx": true,
+      "hookReq": true,
+      "longPath": true,
+      "splitRisk": true,
+      "tier": 1
+    },
+    {
+      "id": "DEV-P0",
+      "lane": 5,
+      "x": 335,
+      "label": "DEV-P0",
+      "sub": "7 Live MCPs",
+      "acct": "mcp_live",
+      "tier": 0
+    },
+    {
+      "id": "DEV-P3-BQ",
+      "lane": 5,
+      "x": 595,
+      "label": "DEV-BQ",
+      "sub": "535-Dkt KG Check",
+      "acct": "gcp_gen_lang",
+      "hookReq": true,
+      "gcp": true,
+      "selfAttest": true,
+      "tier": 0
+    },
+    {
+      "id": "DEV-P3-REP",
+      "lane": 5,
+      "x": 830,
+      "label": "DEV-REP",
+      "sub": "Mirror Manifest",
+      "acct": "gcp_gen_lang",
+      "hookReq": true,
+      "gcp": true,
+      "selfAttest": true,
+      "tier": 2
+    },
+    {
+      "id": "DEV-P5",
+      "lane": 5,
+      "x": 1055,
+      "label": "DEV-P5",
+      "sub": "Unified Graph",
+      "acct": "mcp_live",
+      "ssd": true,
+      "ctx": true,
+      "hookReq": true,
+      "longPath": true,
+      "splitRisk": true,
+      "tier": 1
+    },
+    {
+      "id": "LEG-P0",
+      "lane": 6,
+      "x": 335,
+      "label": "LEG-P0",
+      "sub": "D:/F: + G:/H: Guard",
+      "acct": "local_ssd",
+      "ssd": true,
+      "hookReq": true,
+      "drivefsHazard": true,
+      "longPath": true,
+      "tier": 0
+    },
+    {
+      "id": "LEG-WO1",
+      "lane": 6,
+      "x": 595,
+      "label": "LEG-WO1",
+      "sub": "Nov16 Cite Hash",
+      "acct": "local_ssd",
+      "ssd": true,
+      "ctx": true,
+      "hookReq": true,
+      "longPath": true,
+      "selfAttest": true,
+      "ddl": "Nov 16",
+      "tier": 1
+    },
+    {
+      "id": "LEG-GATE1",
+      "lane": 6,
+      "x": 835,
+      "label": "LEG-GATE",
+      "sub": "V0+Hermes+Human",
+      "acct": "local_ssd",
+      "ssd": true,
+      "hookReq": true,
+      "longPath": true,
+      "selfAttest": true,
+      "unsteeredReq": true,
+      "ddl": "Nov 16",
+      "tier": 3
+    },
+    {
+      "id": "LEG-WO45",
+      "lane": 6,
+      "x": 1065,
+      "label": "LEG-WO45",
+      "sub": "Dec07 Brief Stage",
+      "acct": "local_ssd",
+      "ssd": true,
+      "ctx": true,
+      "hookReq": true,
+      "longPath": true,
+      "selfAttest": true,
+      "ddl": "Dec 07",
+      "tier": 2
+    }
+  ],
+  "edges": [
+    [
+      "FENCE-APP",
+      "SEC-P2",
+      "Airgap Bitwarden + mutex Soniox/ShareX/CUA"
+    ],
+    [
+      "FENCE-APP",
+      "VAL-HRM",
+      "Ban hermes secrets (Bitwarden) & hermes browser (Chrome kill)"
+    ],
+    [
+      "FENCE-APP",
+      "SEAT-GPT",
+      "Fence ChatGPT CUA from physical cursor/mic"
+    ],
+    [
+      "FENCE-GH",
+      "SEC-P2",
+      "Block shell writes to G:\\ & H:\\ DriveFS"
+    ],
+    [
+      "FENCE-GH",
+      "VER-GIT",
+      "Enforce .git on local NVMe C:\\ only (never G:\\/H:\\)"
+    ],
+    [
+      "FENCE-GH",
+      "FIN-P0",
+      "Force gdrive REST API over G:\\/H:\\ mount"
+    ],
+    [
+      "FENCE-GH",
+      "LEG-P0",
+      "Prevent DriveFS sync storms on legal dockets"
+    ],
+    [
+      "FENCE-GH",
+      "REM-CC",
+      "Scope claude --remote-control off G:\\/H:\\ & Bitwarden"
+    ],
+    [
+      "VER-GIT",
+      "SEAT-GPT",
+      "Serve immutable Git commit + Spacefast URL to ChatGPT & Gemini"
+    ],
+    [
+      "VER-GIT",
+      "VAL-HRM",
+      "Provide Git tree & worktree history for Hermes --safe-mode"
+    ],
+    [
+      "VER-GIT",
+      "VAL-CDX",
+      "Commit SHA-256 manifest for Codex V-0 pull verification"
+    ],
+    [
+      "VER-GIT",
+      "REM-CC",
+      "Provide versioned Git repo to Claude Code Remote session"
+    ],
+    [
+      "SEC-P1",
+      "REM-CC",
+      "HARD GATE: Trim <=33 plugins to unlock Antigravity built-in browser"
+    ],
+    [
+      "REM-CC",
+      "FIN-P1-MCP",
+      "Built-in browser drives Claude Remote / web portals hands-free"
+    ],
+    [
+      "REM-CC",
+      "DEV-P5",
+      "Cross-model Opus 5.5 synthesis via claude.ai/code remote session"
+    ],
+    [
+      "REM-CC",
+      "LEG-WO1",
+      "Subordinate Opus 5.5 brief/citation co-audit"
+    ],
+    [
+      "SEAT-GPT",
+      "DEV-P5",
+      "Out-of-band ChatGPT 26.1106 & Gemini 1.18 cross-device review"
+    ],
+    [
+      "VAL-HRM",
+      "DEV-P5",
+      "Hermes v0.23.1 MoA + worktree cleanliness verification"
+    ],
+    [
+      "VAL-HRM",
+      "LEG-GATE1",
+      "Hermes --safe-mode independent verify.py check"
+    ],
+    [
+      "SEC-P2",
+      "VER-GIT",
+      "Record PreToolUse & staged manifest receipts into Git"
+    ],
+    [
+      "VAL-CDX",
+      "DEV-P3-BQ",
+      "Unsteered BigQuery 535-docket FK check"
+    ],
+    [
+      "VAL-CDX",
+      "LEG-WO1",
+      "Independent verify_legal_doc.py SHA-256 hash audit"
+    ],
+    [
+      "VAL-CDX",
+      "LEG-GATE1",
+      "Mandatory UNSTEERED V-0 attestation before human sign-off"
+    ],
+    [
+      "SEC-P0",
+      "SEC-P1",
+      "39/46 plugin budget check"
+    ],
+    [
+      "SEC-P0",
+      "SEC-P2",
+      "6-drive GUID + 15-app process map"
+    ],
+    [
+      "SEC-P2",
+      "SEC-P3",
+      "Hook gates wire/gcloud"
+    ],
+    [
+      "SEC-P2",
+      "EML-P0-SLV",
+      "Hub Gmail read lock"
+    ],
+    [
+      "SEC-P2",
+      "EML-P0-MH",
+      "Mail routing / OAuth gate"
+    ],
+    [
+      "EML-P0-SLV",
+      "EML-P1",
+      "318 thread index"
+    ],
+    [
+      "EML-P0-MH",
+      "EML-P1",
+      "Forwarded [FWD:OPS] threads"
+    ],
+    [
+      "EML-P1",
+      "EML-P2",
+      "Unified shard classify"
+    ],
+    [
+      "EML-P2",
+      "EML-P4",
+      "Extracted dates/items"
+    ],
+    [
+      "SEC-P2",
+      "TS-P0",
+      "Viewer airgap"
+    ],
+    [
+      "TS-P0",
+      "TS-P2",
+      "Calendar+Sheets feed"
+    ],
+    [
+      "TS-P2",
+      "TS-P5",
+      "2-yr metrics"
+    ],
+    [
+      "SEC-P2",
+      "FIN-P0",
+      "Finance Viewer share"
+    ],
+    [
+      "FIN-P0",
+      "FIN-P1-MCP",
+      "Ledger baseline"
+    ],
+    [
+      "FIN-P0",
+      "FIN-P4",
+      "Statement index"
+    ],
+    [
+      "EML-P2",
+      "FIN-P4",
+      "Bank alert dates"
+    ],
+    [
+      "SEC-P2",
+      "DEV-P0",
+      "Safe MCP inventory"
+    ],
+    [
+      "SEC-P3",
+      "DEV-P3-BQ",
+      "GCP BigQuery KG auth"
+    ],
+    [
+      "DEV-P3-BQ",
+      "DEV-P3-REP",
+      "535-docket FK check"
+    ],
+    [
+      "DEV-P0",
+      "DEV-P5",
+      "MCP state"
+    ],
+    [
+      "DEV-P3-BQ",
+      "DEV-P5",
+      "KG node counts"
+    ],
+    [
+      "TS-P5",
+      "DEV-P5",
+      "BI summary"
+    ],
+    [
+      "FIN-P4",
+      "DEV-P5",
+      "Finance flags"
+    ],
+    [
+      "SEC-P2",
+      "LEG-P0",
+      "GUID lock D:/F:"
+    ],
+    [
+      "LEG-P0",
+      "LEG-WO1",
+      "Verified docket files"
+    ],
+    [
+      "DEV-P3-BQ",
+      "LEG-WO1",
+      "BigQuery KG citations"
+    ],
+    [
+      "LEG-WO1",
+      "LEG-GATE1",
+      "SHA-256 cite table"
+    ],
+    [
+      "LEG-GATE1",
+      "LEG-WO45",
+      "Human filing approval"
+    ],
+    [
+      "DEV-P5",
+      "LEG-WO45",
+      "Master LifeOps sync"
+    ],
+    [
+      "FENCE-CLIP",
+      "SEC-P2",
+      "Invariant 8-10 clipboard & webhook guard"
+    ],
+    [
+      "FENCE-CLIP",
+      "CARBON-LOOP",
+      "Zero-PII L1-L9 airgap"
+    ],
+    [
+      "VER-GIT",
+      "CARBON-LOOP",
+      "Signed CARBON-FEED-v1"
+    ],
+    [
+      "CARBON-LOOP",
+      "LEG-GATE1",
+      "Passive CARBON-ADVISORY-v1 critique"
+    ]
+  ],
+  "leakage_surfaces": [
+    {
+      "id": "L1",
+      "name": "Soniox <-> Win32 Clipboard Race",
+      "risk": "Ctrl+V paste + restore collides with copies & strips exclude tags",
+      "guard": "PreToolUse Invariant 8 blocks all shell clipboard I/O + UI Soniox copy guard"
+    },
+    {
+      "id": "L2",
+      "name": "Win11 Clipboard History (Win+V)",
+      "risk": "EnableClipboardHistory=1 persists utterances & untagged copies in cbdhsvc",
+      "guard": "Zero-read sequence monitor + toggle EnableClipboardHistory=0 during vault/legal work"
+    },
+    {
+      "id": "L3",
+      "name": "Bitwarden Vault Clipboard Window",
+      "risk": "hermes secrets / bw CLI or clipboard read exposes vault secrets",
+      "guard": "PreToolUse Invariant 7+8 hard-ban Bitwarden CLI, files & clipboard scraping"
+    },
+    {
+      "id": "L4",
+      "name": "ShareX & Desktop CUA Capture",
+      "risk": "Auto-upload OCR or CUA window focus steal redirects Soniox dictation",
+      "guard": "PreToolUse Invariant 9 blocks ShareX CLI + CUA foreground mutex"
+    },
+    {
+      "id": "L5",
+      "name": "Gemini Carbon @Workspace Bypass",
+      "risk": "Shared-account cloud extensions bypass local Windows hooks.json",
+      "guard": "Passive CARBON-ADVISORY-v1 charter + Viewer IAM shares + quarantine dir"
+    },
+    {
+      "id": "L6",
+      "name": "GoogleDriveFS Virtual Mounts (G:/H:)",
+      "risk": "Local writes/.git trigger cloud sync storms & conflict forks",
+      "guard": "PreToolUse Invariant 6 blocks G:/H: writes; Drive REST API v3 only"
+    },
+    {
+      "id": "L7",
+      "name": "Transcript & Temp CLI Shim Stdout",
+      "risk": "Plaintext env/tokens/clipboard logged to transcript_full.jsonl",
+      "guard": "Metadata-only Win32 probes (ints/booleans only, zero content read)"
+    },
+    {
+      "id": "L8",
+      "name": "Public HTTPS & Outbound Webhooks",
+      "risk": "Emails, paths, GCP IDs or case PII leaked on public verification URLs",
+      "guard": "verify_zero_pii() regex airgap + structural role aliases (0 PII bytes)"
+    },
+    {
+      "id": "L9",
+      "name": "Loopback :8788 CORS Scraping",
+      "risk": "Wildcard CORS lets arbitrary Chrome tabs fetch localhost telemetry",
+      "guard": "Strict Origin allowlist on 127.0.0.1:8788 (403 on third-party origins)"
+    }
+  ]
+}

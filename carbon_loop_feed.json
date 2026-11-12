@@ -1,0 +1,158 @@
+{
+  "schema": "CARBON-FEED-v1",
+  "generated_at_hst": "2026-11-12T13:30:29-10:00",
+  "simulation_version": "7.0.0",
+  "git_parent_commit": "830517525c852844d8aca7541ada9dbd384ca4ab",
+  "simulation_spec_sha256": "3390eef53df405724a9eef5590cdb6604f519285c3b740a8ef1726259c18c590",
+  "topology_summary": {
+    "hub_mode": "single_account_hub_with_superadmin_viewer_airgap",
+    "identity_aliases": {
+      "hub:primary": "Single automation hub (read-only mail, Drive SSOT, BigQuery KG IAM)",
+      "id:principal_legal": "Super-Admin auto-forward + Viewer calendar/drive into hub:primary",
+      "id:hospitality_ro": "Strict Viewer-only BI share into hub:primary (zero writes)",
+      "id:frozen_archive": "Hard-banned in PreToolUse guard"
+    },
+    "dag_counts": {
+      "total_nodes": 32,
+      "total_edges": 56,
+      "active_agents": 7,
+      "stage0_ready_nodes": 2,
+      "stage1_hook_only_ready_nodes": 21,
+      "stage2_full_unlock_ready_nodes": 32
+    },
+    "legal_corpus_invariants": {
+      "trial_case_alias": "CASE-DC-507 (507/507 dockets: 472 PDFs + 35 MINH, 0 missing)",
+      "appellate_case_alias": "CASE-ICA-028 (28/28 dockets, 0 missing)",
+      "kg_graph_stats": "738 nodes, 1223 edges, 100% FK parity, <8 MiB split RAG companions",
+      "epistemic_firewall": "3-Plane HUB_09 isolation + Tier-3 Human/Codex-V0/Hermes-SafeMode filing gate"
+    }
+  },
+  "leakage_posture": {
+    "zero_clipboard_content_read": true,
+    "hook_deployed_live": false,
+    "high_severity_count": 4,
+    "clipboard_flags": {
+      "win11_clipboard_history_enabled": true,
+      "win11_cloud_clipboard_enabled": false,
+      "exclude_monitor_tag_present": false
+    },
+    "surfaces": [
+      {
+        "id": "L1",
+        "surface": "Soniox Voice Dictation <-> Win32 Global Clipboard Injection Race",
+        "severity": "HIGH",
+        "live_telemetry": {
+          "clipboard_seq": 2657,
+          "exclude_monitor_tag": false,
+          "shell_clipboard_hook_active": false
+        },
+        "vector": "Soniox pastes transcribed utterances via Win32 Clipboard + SendInput(Ctrl+V) and restores prior buffer. Concurrent agent Set-Clipboard/Copy or Bitwarden copy causes cross-paste into LLM prompts or strips exclude tags on restore.",
+        "mitigation": "Invariant 8 in pretool_single_hub_guard.py hard-bans Get-Clipboard/Set-Clipboard/clip.exe/pyperclip; UI Copy buttons show Soniox-active guard; keep dictation paused while copying vault credentials."
+      },
+      {
+        "id": "L2",
+        "surface": "Windows 11 Clipboard History (Win+V) & Cross-Device Cloud Sync",
+        "severity": "HIGH",
+        "live_telemetry": {
+          "EnableClipboardHistory": true,
+          "EnableCloudClipboard": false,
+          "ExcludeClipboardContentFromMonitorProcessing": false
+        },
+        "vector": "EnableClipboardHistory=1 archives every Soniox utterance and untagged copy into ConnectedDevicesPlatform history where any desktop app can read it.",
+        "mitigation": "Set HKCU\\Software\\Microsoft\\Clipboard\\EnableClipboardHistory=0 during sensitive legal/vault sessions or enforce CF_EXCLUDE_CLIPBOARD_CONTENT_FROM_MONITOR_PROCESSING on programmatic copies."
+      },
+      {
+        "id": "L3",
+        "surface": "Bitwarden Desktop Vault <-> Agent CLI & Clipboard Window",
+        "severity": "HIGH",
+        "live_telemetry": {
+          "vault_procs": 4,
+          "hermes_secrets_blocked": true
+        },
+        "vector": "hermes secrets / bw CLI or shell clipboard read during Bitwarden's auto-clear window leaks vault secrets into agent transcripts.",
+        "mitigation": "Invariant 7 + 8 hard-ban `hermes secrets`, `bw` CLI, AppData\\Bitwarden reads, and all shell clipboard reads."
+      },
+      {
+        "id": "L4",
+        "surface": "ShareX & Desktop CUA (ChatGPT cua_node / Claude computer-use) Screen & OCR Hooks",
+        "severity": "MEDIUM",
+        "live_telemetry": {
+          "sharex_cli_blocked": true,
+          "cua_foreground_mutex_required": true
+        },
+        "vector": "Foreground screenshots, OCR hotkeys, or CUA window focus changes can capture visible tokens/PII or redirect Soniox Ctrl+V dictation into the wrong window.",
+        "mitigation": "Invariant 9 blocks ShareX CLI uploads; keep CUA computer-use disabled while Soniox dictation is active."
+      },
+      {
+        "id": "L5",
+        "surface": "Gemini App (Carbon Task Mode) Shared-Account @Google Workspace Connector Bypass",
+        "severity": "MEDIUM",
+        "live_telemetry": {
+          "advisory_quarantine_dir_ready": true,
+          "shared_hub_oauth": true
+        },
+        "vector": "Gemini App Carbon runs server-side on hub:primary OAuth, bypassing local Windows hooks.json if prompted to edit/send/trash via @Gmail/@Drive/@Tasks.",
+        "mitigation": "Enforce Read-Only CARBON-ADVISORY-v1 Task Charter + Super-Admin Viewer-only IAM shares + HUB_09 3-Plane Epistemic Firewall; quarantine proposals in staged_manifests/carbon_advisories/."
+      },
+      {
+        "id": "L6",
+        "surface": "GoogleDriveFS Virtual Mounts (G: / H:) Sync-Storm & Metadata Leak",
+        "severity": "HIGH",
+        "live_telemetry": {
+          "g_mounted": true,
+          "h_mounted": true
+        },
+        "vector": "Local writes, .gitlocks, or temp files on G:/H: sync immediately to cloud Drive and generate *(1)* conflict forks.",
+        "mitigation": "Invariant 6 blocks all write_file/edit_file/run_command mutations targeting G:\\ or H:\\; Drive REST API v3 dry-run only."
+      },
+      {
+        "id": "L7",
+        "surface": "LLM Session Transcripts (transcript_full.jsonl) & Ephemeral CLI Shim Logs",
+        "severity": "GUARDED",
+        "live_telemetry": {
+          "zero_clipboard_read_enforced": true,
+          "zero_secret_stdout_rule": true
+        },
+        "vector": "Printing raw env vars, OAuth headers, clipboard text, or vault files writes permanent plaintext into .system_generated/logs/transcript_full.jsonl.",
+        "mitigation": "Metadata-only Win32 probes (sequence ints & booleans only) + PreToolUse stdout secret/clipboard blocks."
+      },
+      {
+        "id": "L8",
+        "surface": "Public HTTPS Verification Feed & Outbound Webhook Payloads (Spacefast / Relay)",
+        "severity": "GUARDED",
+        "live_telemetry": {
+          "zero_pii_regex_enforced": true,
+          "role_alias_tokenization": true
+        },
+        "vector": "Publishing literal emails, Windows user paths, GCP project IDs, or case party PII to public HTTPS or webhook relays exposes operational topology.",
+        "mitigation": "verify_zero_pii() deterministic gate rejects any payload with >0 emails, tokens, user paths, or case PII; public artifacts use role aliases (hub:primary, CASE-DC-507, $LO_ROOT)."
+      }
+    ]
+  },
+  "carbon_review_questions": [
+    "Q1-LEAKAGE: Identify any residual cross-surface data or clipboard leakage path across L1-L8 (especially Soniox clipboard injection + Win11 ClipboardHistory + shared-account Workspace connectors).",
+    "Q2-DAG-DRIFT: Check whether any single-point bottleneck in Stage 0 -> Stage 2 can fail silently or regress across reboots/updates.",
+    "Q3-WORKFLOW: Propose concrete workflow or architectural adjustments ordered by risk-reduction per minute of operator effort."
+  ],
+  "advisory_output_schema": {
+    "schema": "CARBON-ADVISORY-v1",
+    "required_fields": [
+      "schema",
+      "reviewed_spec_sha256",
+      "reviewed_feed_sha256",
+      "overall_verdict",
+      "leakage_findings",
+      "proposed_adjustments"
+    ],
+    "mutation_policy": "STRICT_PASSIVE_ADVISORY_ONLY \u2014 zero direct Gmail/Drive/Calendar/Task writes; proposals land in staged_manifests/carbon_advisories/ for Seat-A + Codex V-0 + Hermes --safe-mode + Human approval."
+  },
+  "zero_pii_attestation": {
+    "verified": true,
+    "emails_found": 0,
+    "tokens_found": 0,
+    "user_paths_found": 0,
+    "banned_terms_found": 0,
+    "banned_term_Preview": [],
+    "core_payload_sha256": "976166050112135242c4d176312287416e798814d2a444e196b64e3a538e0884"
+  }
+}

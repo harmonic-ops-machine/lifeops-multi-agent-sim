@@ -1,13 +1,13 @@
 {
   "artifact_id": "highres-multi-agent-isolation-dag",
-  "version": "8.1.0",
-  "released_at_hst": "2026-11-12T15:44:48-10:00",
+  "version": "8.2.0",
+  "released_at_hst": "2026-11-12T16:49:06-10:00",
   "git_head_parent": "c2ec7f2a2c01088cf3f850a0256c5b954c18cdd9",
   "zero_pii_public_airgap": true,
   "files": {
     "simulation_spec.json": {
-      "sha256": "3a438ed706fbb0627a51464600e9f563cb192fffd7acbd1529fce2cfb67418bc",
-      "bytes": 26757
+      "sha256": "d523ab148033a23c285db3ec7a43280dceba983a15aba4e5cd1fa6511712fa1e",
+      "bytes": 27385
     },
     "index.html": {
       "sha256": "543ee9408eb1cb835468142d2094e36a237fe5d0e7041b8685c243df038e2e0b",
@@ -18,20 +18,24 @@
       "bytes": 6440
     },
     "carbon_loop_feed.json": {
-      "sha256": "5a7810dee129049aa802e67cfa2ce384b6fb023da377cf2392b21eb1b0d36946",
-      "bytes": 8058
+      "sha256": "4215a4bb1728f0ece1a68f0d17b87373f8ce61bfb63fc63031d766d0b28b67f4",
+      "bytes": 8062
     },
     "prior_work_digest.json": {
-      "sha256": "992ac5d6be2adb9f7a287b727f609b6669dfdee933ad47cf312bd37a5b6bacfd",
-      "bytes": 17129
+      "sha256": "92c211a9e9fb2a4444e2bf8c3544c26c47b8e610cbd48ea309fa4c088f180fcc",
+      "bytes": 18198
     },
     "HANDOFF_REDACTED.md": {
       "sha256": "12407f226ebf46b6c2108a5917071731cf1af73cb36e2207c005e29fd48a9b8f",
       "bytes": 5069
     },
     "CONTINUITY_CHECKPOINT.json": {
-      "sha256": "cc70313cf4d7411f5ba5746bdb6794ac300027eb99aba4ec11c0fd81d09b0faf",
-      "bytes": 1811
+      "sha256": "254ef6bc9f5703550027e367652052c190105227e293fe4f912ee52b1826c24a",
+      "bytes": 2387
+    },
+    "advisories/CA-20261112-001.json": {
+      "sha256": "123e2f0366a6b924df12cff029d76e2302e57f3eefbddeb0be1df83c224c90b8",
+      "bytes": 4562
     }
   }
 }

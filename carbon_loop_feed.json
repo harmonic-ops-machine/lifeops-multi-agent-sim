@@ -1,9 +1,9 @@
 {
   "schema": "CARBON-FEED-v1",
-  "generated_at_hst": "2026-11-12T14:17:34-10:00",
-  "simulation_version": "7.0.0",
-  "git_parent_commit": "830517525c852844d8aca7541ada9dbd384ca4ab",
-  "simulation_spec_sha256": "3390eef53df405724a9eef5590cdb6604f519285c3b740a8ef1726259c18c590",
+  "generated_at_hst": "2026-11-12T16:49:06-10:00",
+  "simulation_version": "8.2.0",
+  "git_parent_commit": "c2ec7f2a2c01088cf3f850a0256c5b954c18cdd9",
+  "simulation_spec_sha256": "d523ab148033a23c285db3ec7a43280dceba983a15aba4e5cd1fa6511712fa1e",
   "topology_summary": {
     "hub_mode": "single_account_hub_with_superadmin_viewer_airgap",
     "identity_aliases": {
@@ -13,12 +13,12 @@
       "id:frozen_archive": "Hard-banned in PreToolUse guard"
     },
     "dag_counts": {
-      "total_nodes": 32,
-      "total_edges": 56,
+      "total_nodes": 34,
+      "total_edges": 63,
       "active_agents": 7,
       "stage0_ready_nodes": 2,
       "stage1_hook_only_ready_nodes": 21,
-      "stage2_full_unlock_ready_nodes": 32
+      "stage2_full_unlock_ready_nodes": 34
     },
     "legal_corpus_invariants": {
       "trial_case_alias": "CASE-DC-507 (507/507 dockets: 472 PDFs + 35 MINH, 0 missing)",
@@ -29,8 +29,8 @@
   },
   "leakage_posture": {
     "zero_clipboard_content_read": true,
-    "hook_deployed_live": false,
-    "high_severity_count": 3,
+    "hook_deployed_live": true,
+    "high_severity_count": 1,
     "clipboard_flags": {
       "win11_clipboard_history_enabled": true,
       "win11_cloud_clipboard_enabled": false,
@@ -42,9 +42,9 @@
         "surface": "Soniox Voice Dictation <-> Win32 Global Clipboard Injection Race",
         "severity": "LOW",
         "live_telemetry": {
-          "clipboard_seq": 2697,
+          "clipboard_seq": 3144,
           "exclude_monitor_tag": false,
-          "shell_clipboard_hook_active": false
+          "shell_clipboard_hook_active": true
         },
         "vector": "Soniox pastes transcribed utterances via Win32 Clipboard + SendInput(Ctrl+V) and restores prior buffer. Concurrent agent Set-Clipboard/Copy or Bitwarden copy causes cross-paste into LLM prompts or strips exclude tags on restore.",
         "mitigation": "Invariant 8 in pretool_single_hub_guard.py hard-bans Get-Clipboard/Set-Clipboard/clip.exe/pyperclip; UI Copy buttons show Soniox-active guard; keep dictation paused while copying vault credentials."
@@ -64,7 +64,7 @@
       {
         "id": "L3",
         "surface": "Bitwarden Desktop Vault <-> Agent CLI & Clipboard Window",
-        "severity": "HIGH",
+        "severity": "GUARDED",
         "live_telemetry": {
           "vault_procs": 4,
           "hermes_secrets_blocked": true
@@ -97,7 +97,7 @@
       {
         "id": "L6",
         "surface": "GoogleDriveFS Virtual Mounts (G: / H:) Sync-Storm & Metadata Leak",
-        "severity": "HIGH",
+        "severity": "GUARDED",
         "live_telemetry": {
           "g_mounted": true,
           "h_mounted": true
@@ -153,6 +153,6 @@
     "user_paths_found": 0,
     "banned_terms_found": 0,
     "banned_term_Preview": [],
-    "core_payload_sha256": "fdf1cf56e060b2d74668eaf6dc9a45a2ee3c803096419a6a3d1ae2fe1c76bf9c"
+    "core_payload_sha256": "66b56d16b2731493261091b4c14999df0e4e25c13356cb23ece4ea3c93218808"
   }
 }

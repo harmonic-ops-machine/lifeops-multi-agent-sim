@@ -1,7 +1,7 @@
 {
-  "schema_version": "8.1.0",
+  "schema_version": "8.2.0",
   "artifact_id": "highres-multi-agent-isolation-dag",
-  "released_at_hst": "2026-11-12T14:17:34-10:00",
+  "released_at_hst": "2026-11-12T16:48:00-10:00",
   "version_history": [
     {
       "version": "1.0.0",
@@ -34,6 +34,14 @@
     {
       "version": "8.0.0",
       "summary": "Added Single Designated Local Executor Broker (EXEC-FABLE: Claude Code Fable 2.1.321 --restricted + Win32 Mutex + Dual-Engine PreToolUse Guard) & Automated Spacefast Bidirectional Comment Sync (SF-SYNC: prior_work_digest.json <-> createSpaceVersionComment)"
+    },
+    {
+      "version": "8.1.0",
+      "summary": "Added Single-Account WebView Enclave, GitHub Machine Identity (harmonic-ops-machine), and Stop/SessionStart Iterative Continuity Daemon (CONTINUITY_CHECKPOINT.json)"
+    },
+    {
+      "version": "8.2.0",
+      "summary": "Verified Full Closed-Loop Recursive Self-Improvement: Symmetric Dual-Outbox Federation (harmonic-garden.space.fast <-> harmonic-carbon-outbox.space.fast), Pre-Flight Handshake (IMP-LOOP-810), Hash-Chained Continuity v2 (parent_digest_sha256 + sequence_number + NO_TOOL_CALL stall detector), and Full-Jitter Exponential Backoff + Dead-Letter Spool"
     }
   ],
   "command_authorization_stages": [

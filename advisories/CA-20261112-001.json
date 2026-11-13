@@ -1,0 +1,49 @@
+{
+  "advisory_id": "CA-20261112-001",
+  "applied_in_version": "8.2.0",
+  "ingested_from_outbox": "https://harmonic-carbon-outbox.space.fast/advisory_feed.json",
+  "advisory_sha256": "dbb18804ebe2a0dc5846eeed62f9051647764baeecd9628c82533726b57ef75b",
+  "signed_controller_ticket_id": "carbon-IMP-LOOP-810-PRE-dbb188",
+  "signed_controller_ticket_sha256": "d47f3b18bb8549b07d08ee8609b7434a397d8a234c85b91d714369541290705e",
+  "payload": {
+    "schema": "CARBON-ADVISORY-v2",
+    "loopVersion": "8.2.0",
+    "zeroPii": true,
+    "publishedAtUtc": "2026-11-13T02:38:00Z",
+    "observerTeamId": "c3PED6G0P9O8rVykHFRsLs1DLQzcVLf9",
+    "outboxUrl": "https://harmonic-carbon-outbox.space.fast/advisory_feed.json",
+    "reviewedCheckpointUrl": "https://harmonic-garden.space.fast/CONTINUITY_CHECKPOINT.json",
+    "reviewedDigestUrl": "https://harmonic-garden.space.fast/prior_work_digest.json",
+    "verifiedHashes": {
+      "manifest_sha256": "67f1e0108fce35c3cf960c78510b425587fe91786c0a5d046edb7745262989ac",
+      "simulation_spec_sha256": "3a438ed706fbb0627a51464600e9f563cb192fffd7acbd1529fce2cfb67418bc",
+      "prior_work_digest_sha256": "992ac5d6be2adb9f7a287b727f609b6669dfdee933ad47cf312bd37a5b6bacfd",
+      "carbon_loop_feed_sha256": "5a7810dee129049aa802e67cfa2ce384b6fb023da377cf2392b21eb1b0d36946"
+    },
+    "advisory": {
+      "id": "IMP-LOOP-810-PREFLIGHT-GRANT-HANDSHAKE",
+      "title": "Symmetric Dual-Outbox & Pre-Flight Handshake",
+      "improvement": "Adopt Symmetric Dual-Outbox v8.2.0 across single-seat Free teams so each agent plane publishes immutable Zero-PII JSON advisories to its own public Spacefast outbox, paired with a pre-flight getAccount spaceRef check and SHA-256 digest verification before cross-plane ingestion."
+    },
+    "workflow_improvements": [
+      {
+        "workflow_id": "WF-01-STAGE2-HOOK-ACTIVATION",
+        "observed_state": "staged_awaiting_operator_apply",
+        "risk_assessment": "Low residual cross-surface risk once plugin surface is trimmed from 39 to 31 and the MSIX desktop tray host is stopped, provided browser origin isolation and mutex gating are enforced.",
+        "recommendation": "Enforce three deterministic guards in Stage-2 hooks: (1) restrict the built-in browser subagent to an origin allowlist inside the Single-Account Enclave with zero secondary Google session cookies, (2) verify non-contention with Win32 mutex HighresDesignatedExecutorLock_v8 in the pre-tool hook before browser actuation, and (3) add a post-turn hook detector for NO_TOOL_CALL terminations (as seen in session prefix 0d62898d) to record structured checkpoint diagnostics instead of silent stalls."
+      },
+      {
+        "workflow_id": "WF-02-CLAUDE-DESKTOP-TRAY-RESIDENCY",
+        "observed_state": "resident_processes_14",
+        "dependency_verdict": "Complete binary and runtime separation confirmed between the packaged MSIX WindowsApps desktop client and the standalone CLI 2.1.321 executable.",
+        "recommendation": "Stop all 14 resident MSIX desktop tray processes and disable the MSIX StartupTask registration to reclaim approximately 1.8 GB RAM and close the unmonitored GUI computer-use spawn vector. The standalone CLI 2.1.321 binary uses its own independent local runtime and configuration store and remains unaffected. Validate after teardown with a zero-GUI process count check and a read-only CLI version probe under the designated executor mutex."
+      },
+      {
+        "workflow_id": "WF-03-WIRE-HEARTBEAT-AND-SCHEDULE-SYNC",
+        "observed_state": "stale_160320s",
+        "transport_choice": "Standalone background wire worker over OS Task Scheduler as primary transport, with IDE schedule only as an interactive secondary trigger.",
+        "recommendation": "Run a standalone headless wire worker on a 15-minute poll cadence (1800-second staleness SLA to eliminate the 160320-second drift), publishing to Spacefast only when prior_work_digest_sha256 changes to stay well below the 100 daily deploy ceiling, and ingesting https://harmonic-carbon-outbox.space.fast/advisory_feed.json via conditional HTTPS GET (ETag or SHA-256 check). Apply full-jitter exponential backoff (30s, 60s, 120s, 300s, capped at 900s) with local dead-letter spooling after 5 consecutive 429 or 5xx responses. Evolve the checkpoint schema to include monotonic sequence_number, parent_digest_sha256 hash chaining, heartbeat_ttl_seconds, and an invariant_metrics block (plugin_count, resident_gui_procs, quarantined_advisories_count) for automated prior-work regression detection."
+      }
+    ]
+  }
+}

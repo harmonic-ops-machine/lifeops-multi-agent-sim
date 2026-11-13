@@ -1,12 +1,12 @@
 {
   "schema": "HIGHRES-CONTINUITY-CHECKPOINT-v2",
-  "updated_at_hst": "2026-11-12T16:49:58-10:00",
+  "updated_at_hst": "2026-11-12T17:26:43-10:00",
   "simulation_version": "8.2.0",
-  "sequence_number": 4,
-  "parent_digest_sha256": "c9e103c9a0b439f29de892cdb53fe112cdc37638b756569ba3405a21c208e76c",
+  "sequence_number": 8,
+  "parent_digest_sha256": "54c3a1683c23038abf23478fb9e67206a5b2a5bd0c27e3d929d6ad566f0a4f19",
   "heartbeat_ttl_seconds": 1800,
   "enclave_posture": {
-    "antigravity_webview_mode": "Single-Account Enclave (primary operational hub only; zero secondary /u/1/ Google cookies)",
+    "antigravity_webview_mode": "Single-Account Enclave (/u/0/ primary hub only post-rollover; clean MultiLogin rollover between sessions, /u/0/ pinning mid-flight)",
     "github_machine_account": "harmonic-ops-machine",
     "github_repository": "https://github.com/harmonic-ops-machine/lifeops-multi-agent-sim",
     "spacefast_space_id": "spc_4191a55af38b42d986059e576e4b9800",
@@ -15,10 +15,10 @@
     "spacefast_carbon_outbox_url": "https://harmonic-carbon-outbox.space.fast/advisory_feed.json",
     "spacefast_mcp_endpoint": "https://mcp.spacefast.com",
     "designated_local_executor": "Claude Code CLI 2.1.321 (--model fable) gated by Win32 Mutex Local\\HighresDesignatedExecutorLock_v8",
-    "gemini_app_auditor": "Gemini 4 Carbon (Task Mode) via Symmetric Dual-Outbox Spacefast MCP + @GitHub (zero consumer web scraping, zero Google Workspace/business connectors)"
+    "gemini_app_auditor": "Gemini 4 Carbon (Task Mode) via Symmetric Dual-Outbox Spacefast MCP + @GitHub (zero consumer web scraping; Tier 0-1 Always allow 302/485, Tier 2-3 Always ask 183/485)"
   },
   "artifact_hashes": {
-    "manifest_sha256": "04c84f74f6666613158821f4971f6b7cdb59e27b5bd3545bda4b946b4b79a857",
+    "manifest_sha256": "7cb359bd34bde241b7ab707a63c82348f216670c05924d0970dda0dbd66f2964",
     "simulation_spec_sha256": "d523ab148033a23c285db3ec7a43280dceba983a15aba4e5cd1fa6511712fa1e",
     "prior_work_digest_sha256": "54c3a1683c23038abf23478fb9e67206a5b2a5bd0c27e3d929d6ad566f0a4f19",
     "carbon_loop_feed_sha256": "61c34ade7e142a6faf625ebcd86dddd0986db5d8cbe86412ff8b1a8ee8e61098"
@@ -30,10 +30,10 @@
   },
   "stall_diagnostic": {
     "no_tool_call_detected": false,
-    "termination_reason": "CARBON_LOOP_V820_APPLIED"
+    "termination_reason": "SELF_TEST"
   },
   "quarantined_advisories_count": 3,
   "latest_session_id_prefix": "0d62898d",
-  "last_termination_reason": "CARBON_LOOP_V820_APPLIED",
+  "last_termination_reason": "SELF_TEST",
   "gemini_carbon_resume_instruction": "Read prior_work_digest.json and CONTINUITY_CHECKPOINT.json from https://harmonic-garden.space.fast or harmonic-ops-machine/lifeops-multi-agent-sim, evaluate open workflow bottlenecks, and publish CARBON-ADVISORY-v2 JSON to https://harmonic-carbon-outbox.space.fast/advisory_feed.json."
 }

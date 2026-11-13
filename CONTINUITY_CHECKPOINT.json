@@ -1,9 +1,9 @@
 {
   "schema": "HIGHRES-CONTINUITY-CHECKPOINT-v2",
-  "updated_at_hst": "2026-11-12T16:49:06-10:00",
+  "updated_at_hst": "2026-11-12T16:49:58-10:00",
   "simulation_version": "8.2.0",
-  "sequence_number": 1,
-  "parent_digest_sha256": "3025e04cecd5a67d7017d5ac9564d08f41848d59780535349ab4ed7570aae137",
+  "sequence_number": 4,
+  "parent_digest_sha256": "c9e103c9a0b439f29de892cdb53fe112cdc37638b756569ba3405a21c208e76c",
   "heartbeat_ttl_seconds": 1800,
   "enclave_posture": {
     "antigravity_webview_mode": "Single-Account Enclave (primary operational hub only; zero secondary /u/1/ Google cookies)",
@@ -18,10 +18,10 @@
     "gemini_app_auditor": "Gemini 4 Carbon (Task Mode) via Symmetric Dual-Outbox Spacefast MCP + @GitHub (zero consumer web scraping, zero Google Workspace/business connectors)"
   },
   "artifact_hashes": {
-    "manifest_sha256": "99b5dcc9f90e0623f0160ef5e38da404928da77aceda2a34a4c440ca8accbd56",
+    "manifest_sha256": "04c84f74f6666613158821f4971f6b7cdb59e27b5bd3545bda4b946b4b79a857",
     "simulation_spec_sha256": "d523ab148033a23c285db3ec7a43280dceba983a15aba4e5cd1fa6511712fa1e",
-    "prior_work_digest_sha256": "92c211a9e9fb2a4444e2bf8c3544c26c47b8e610cbd48ea309fa4c088f180fcc",
-    "carbon_loop_feed_sha256": "4215a4bb1728f0ece1a68f0d17b87373f8ce61bfb63fc63031d766d0b28b67f4"
+    "prior_work_digest_sha256": "54c3a1683c23038abf23478fb9e67206a5b2a5bd0c27e3d929d6ad566f0a4f19",
+    "carbon_loop_feed_sha256": "61c34ade7e142a6faf625ebcd86dddd0986db5d8cbe86412ff8b1a8ee8e61098"
   },
   "invariant_metrics": {
     "plugin_count": 31,

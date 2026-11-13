@@ -1,7 +1,7 @@
 {
   "schema": "CARBON-WORKFLOW-DIGEST-v1",
   "architecture_version": "8.2.0",
-  "generated_at_hst": "2026-11-12T16:49:06-10:00",
+  "generated_at_hst": "2026-11-12T16:49:58-10:00",
   "spacefast_target": {
     "space_id": "spc_4191a55af38b42d986059e576e4b9800",
     "digest_url": "https://harmonic-garden.space.fast/prior_work_digest.json",
@@ -63,7 +63,7 @@
       "workspace_mutation_ban": "STRICT_READ_ONLY (no @Gmail/@Drive/@Docs writes)"
     },
     "live_windows_arena": {
-      "ts_hst": "2026-11-12T16:49:05-10:00",
+      "ts_hst": "2026-11-12T16:49:58-10:00",
       "clean_single_executor_arena": false,
       "blocking_desktop_agents": {
         "claude_desktop_msix_cua": 14
@@ -316,13 +316,13 @@
       "alias": "$WIRE_BIN",
       "present": true,
       "count": 11,
-      "total_bytes": 178751,
+      "total_bytes": 179865,
       "recent_artifacts": [
         {
           "artifact": "$WIRE_BIN/spacefast_carbon_sync.py",
-          "bytes": 32223,
-          "modified_hst": "2026-11-12T16:47:37-10:00",
-          "sha256_prefix": "f9f875dc4a0817a3"
+          "bytes": 33337,
+          "modified_hst": "2026-11-12T16:49:32-10:00",
+          "sha256_prefix": "2c4496dc52f25090"
         },
         {
           "artifact": "$WIRE_BIN/session_continuity_daemon.py",
@@ -390,37 +390,37 @@
       "alias": "$LO_ROOT/simulations/lifeops-multi-agent-sim",
       "present": true,
       "count": 9,
-      "total_bytes": 119413,
+      "total_bytes": 120111,
       "recent_artifacts": [
         {
           "artifact": "$LO_ROOT/simulations/lifeops-multi-agent-sim/simulation_spec.json",
           "bytes": 27385,
-          "modified_hst": "2026-11-12T16:49:05-10:00",
+          "modified_hst": "2026-11-12T16:49:58-10:00",
           "sha256_prefix": "d523ab148033a23c"
         },
         {
           "artifact": "$LO_ROOT/simulations/lifeops-multi-agent-sim/manifest.json",
-          "bytes": 1222,
-          "modified_hst": "2026-11-12T16:45:28-10:00",
-          "sha256_prefix": "1121b75e11814bf8"
+          "bytes": 1374,
+          "modified_hst": "2026-11-12T16:49:58-10:00",
+          "sha256_prefix": "63bbb37a7a71423e"
         },
         {
           "artifact": "$LO_ROOT/simulations/lifeops-multi-agent-sim/CONTINUITY_CHECKPOINT.json",
-          "bytes": 1811,
-          "modified_hst": "2026-11-12T16:45:28-10:00",
-          "sha256_prefix": "bb80c64188102885"
+          "bytes": 2357,
+          "modified_hst": "2026-11-12T16:49:58-10:00",
+          "sha256_prefix": "23d33085ad86d303"
         },
         {
           "artifact": "$LO_ROOT/simulations/lifeops-multi-agent-sim/carbon_loop_feed.json",
           "bytes": 8062,
-          "modified_hst": "2026-11-12T16:32:36-10:00",
-          "sha256_prefix": "c8f171db2d52a29a"
+          "modified_hst": "2026-11-12T16:49:58-10:00",
+          "sha256_prefix": "61c34ade7e142a6f"
         },
         {
           "artifact": "$LO_ROOT/simulations/lifeops-multi-agent-sim/prior_work_digest.json",
           "bytes": 18198,
-          "modified_hst": "2026-11-12T16:32:36-10:00",
-          "sha256_prefix": "3025e04cecd5a67d"
+          "modified_hst": "2026-11-12T16:49:58-10:00",
+          "sha256_prefix": "c9e103c9a0b439f2"
         },
         {
           "artifact": "$LO_ROOT/simulations/lifeops-multi-agent-sim/HANDOFF_REDACTED.md",
@@ -465,7 +465,7 @@
     },
     {
       "workflow_id": "WF-03-WIRE-HEARTBEAT-AND-SCHEDULE-SYNC",
-      "current_state": "stale_169411s",
+      "current_state": "stale_169464s",
       "policy_reference": "$WORKSTATION/administration/POLICY.md",
       "description": "Periodic Spacefast digest upload + listSpaceVersionComments ingestion via Antigravity /schedule vs standalone pythonw wire worker.",
       "question_for_carbon": "Recommend optimal cadence, failure backoff, and schema evolution for prior-work regression detection."

@@ -1,5 +1,5 @@
 {
-  "schema_version": "8.0.0",
+  "schema_version": "8.1.0",
   "artifact_id": "highres-multi-agent-isolation-dag",
   "released_at_hst": "2026-11-12T14:17:34-10:00",
   "version_history": [

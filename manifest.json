@@ -1,12 +1,12 @@
 {
   "artifact_id": "highres-multi-agent-isolation-dag",
-  "version": "8.0.0",
-  "released_at_hst": "2026-11-12T14:17:34-10:00",
+  "version": "8.1.0",
+  "released_at_hst": "2026-11-12T15:44:48-10:00",
   "git_head_parent": "c2ec7f2a2c01088cf3f850a0256c5b954c18cdd9",
   "zero_pii_public_airgap": true,
   "files": {
     "simulation_spec.json": {
-      "sha256": "ff8fe0c391c7359b10a8342b5b0f5dcd814b42bd1599f2e83f1ddf8f967b658b",
+      "sha256": "3a438ed706fbb0627a51464600e9f563cb192fffd7acbd1529fce2cfb67418bc",
       "bytes": 26757
     },
     "index.html": {
@@ -28,6 +28,10 @@
     "HANDOFF_REDACTED.md": {
       "sha256": "12407f226ebf46b6c2108a5917071731cf1af73cb36e2207c005e29fd48a9b8f",
       "bytes": 5069
+    },
+    "CONTINUITY_CHECKPOINT.json": {
+      "sha256": "cc70313cf4d7411f5ba5746bdb6794ac300027eb99aba4ec11c0fd81d09b0faf",
+      "bytes": 1811
     }
   }
 }

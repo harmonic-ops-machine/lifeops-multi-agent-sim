@@ -1,0 +1,25 @@
+{
+  "schema": "HIGHRES-CONTINUITY-CHECKPOINT-v1",
+  "updated_at_hst": "2026-11-12T15:53:47-10:00",
+  "simulation_version": "8.1.0",
+  "enclave_posture": {
+    "antigravity_webview_mode": "Single-Account Enclave (primary operational hub only; zero secondary /u/1/ Google cookies)",
+    "github_machine_account": "harmonic-ops-machine",
+    "github_repository": "https://github.com/harmonic-ops-machine/lifeops-multi-agent-sim",
+    "spacefast_space_id": "spc_4191a55af38b42d986059e576e4b9800",
+    "spacefast_public_url": "https://harmonic-garden.space.fast",
+    "spacefast_mcp_endpoint": "https://mcp.spacefast.com",
+    "designated_local_executor": "Claude Code CLI 2.1.321 (--model fable) gated by Win32 Mutex Local\\HighresDesignatedExecutorLock_v8",
+    "gemini_app_auditor": "Gemini 4 Carbon via server-to-server @GitHub + Spacefast Custom MCP (zero consumer web scraping, zero Google Workspace/business connectors)"
+  },
+  "artifact_hashes": {
+    "manifest_sha256": "67f1e0108fce35c3cf960c78510b425587fe91786c0a5d046edb7745262989ac",
+    "simulation_spec_sha256": "3a438ed706fbb0627a51464600e9f563cb192fffd7acbd1529fce2cfb67418bc",
+    "prior_work_digest_sha256": "992ac5d6be2adb9f7a287b727f609b6669dfdee933ad47cf312bd37a5b6bacfd",
+    "carbon_loop_feed_sha256": "5a7810dee129049aa802e67cfa2ce384b6fb023da377cf2392b21eb1b0d36946"
+  },
+  "quarantined_advisories_count": 2,
+  "latest_session_id_prefix": "0d62898d",
+  "last_termination_reason": "NO_TOOL_CALL",
+  "gemini_carbon_resume_instruction": "Read prior_work_digest.json and CONTINUITY_CHECKPOINT.json from harmonic-ops-machine/lifeops-multi-agent-sim or https://harmonic-garden.space.fast, evaluate open workflow bottlenecks, and commit CARBON-ADVISORY-v2 JSON to branch carbon/advisories (or post via Spacefast MCP createSpaceVersionComment)."
+}

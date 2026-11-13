@@ -1,0 +1,462 @@
+{
+  "schema": "CARBON-WORKFLOW-DIGEST-v1",
+  "architecture_version": "8.0.0",
+  "generated_at_hst": "2026-11-12T14:17:34-10:00",
+  "spacefast_target": {
+    "space_id": "spc_4191a55af38b42d986059e576e4b9800",
+    "digest_url": "https://harmonic-garden.space.fast/prior_work_digest.json",
+    "feed_url": "https://harmonic-garden.space.fast/carbon_loop_feed.json",
+    "spec_url": "https://harmonic-garden.space.fast/simulation_spec.json",
+    "return_channel": {
+      "mcp_server": "https://mcp.spacefast.com",
+      "mcp_tool": "createSpaceVersionComment",
+      "anchor_page_path": "/prior_work_digest.json",
+      "idempotency_pattern": "carbon-adv-<versionId>-<cycle>",
+      "inbound_poller": "$WIRE_BIN/spacefast_carbon_sync.py --ingest-spacefast-comments",
+      "zero_inbound_windows_ports": true
+    }
+  },
+  "windows_execution_topology": {
+    "orchestrator_plane": {
+      "agent": "Antigravity (Seat A)",
+      "role": "Control Plane, Spacefast Bidirectional Sync, Remote Browser Session Controller",
+      "pretool_hook_script": "$WIRE_BIN/pretool_single_hub_guard.py",
+      "pretool_hooks_json_active": false,
+      "dual_engine_hook_support": [
+        "antigravity",
+        "claude_code_2.1"
+      ]
+    },
+    "designated_single_local_executor": {
+      "broker": "$WIRE_BIN/designated_local_executor.py",
+      "binary_present": true,
+      "engine": "Claude Code CLI 2.1.321 (--model fable)",
+      "kernel_lock": "Win32 CreateMutexW('Local\\HighresDesignatedExecutorLock_v8')",
+      "sandbox_flags": [
+        "--restricted",
+        "--no-chrome",
+        "--strict-mcp-config",
+        "--permission-mode acceptEdits",
+        "--worktree <ticket-id>",
+        "--settings $LO_ROOT/data/claude_fable_locked_settings.json"
+      ],
+      "remote_offload_modes": [
+        "cloud (claude --cloud -> isolated Anthropic cloud VM controlled via Antigravity browser subagent)",
+        "remote-control (claude --restricted --remote-control -> supervised isolated worktree)"
+      ]
+    },
+    "auditor_plane": {
+      "agent": "Gemini Desktop App 1.18.0 (Carbon Model in Scheduled Task Mode)",
+      "mcp_connection": "Hosted HTTP https://mcp.spacefast.com (OAuth 5-min delegated tokens, zero local disk access)",
+      "permitted_scopes": [
+        "spaces:read",
+        "comments.write"
+      ],
+      "workspace_mutation_ban": "STRICT_READ_ONLY (no @Gmail/@Drive/@Docs writes)"
+    },
+    "live_windows_arena": {
+      "ts_hst": "2026-11-12T14:17:34-10:00",
+      "clean_single_executor_arena": false,
+      "blocking_desktop_agents": {
+        "claude_desktop_msix_cua": 14
+      },
+      "unauthorized_counts": {
+        "chatgpt_cua": 0,
+        "soniox_clipboard_injector": 0,
+        "hermes_yolo": 0,
+        "codex_ui": 0,
+        "claude_desktop_msix_cua": 14
+      },
+      "authorized_processes": {
+        "antigravity_orchestrator": 21,
+        "gemini_app_carbon_cloud_auditor": 9,
+        "claude_cli_jailed_workers": 4,
+        "bitwarden_airgapped_vault": 4
+      }
+    }
+  },
+  "prior_work_inventory": {
+    "reports": {
+      "alias": "$LO_ROOT/reports",
+      "present": true,
+      "count": 37,
+      "total_bytes": 950356,
+      "recent_artifacts": [
+        {
+          "artifact": "$LO_ROOT/reports/2026-11-12_FULL_ECOSYSTEM_PROJECT_HANDOFF.md",
+          "bytes": 24620,
+          "modified_hst": "2026-11-12T13:53:45-10:00",
+          "sha256_prefix": "6abe12cb98124ddf"
+        },
+        {
+          "artifact": "$LO_ROOT/reports/versioned_7_agent_simulation_v5_20261112.md",
+          "bytes": 5196,
+          "modified_hst": "2026-11-12T12:35:21-10:00",
+          "sha256_prefix": "77b74bf040992f01"
+        },
+        {
+          "artifact": "$LO_ROOT/reports/multi_app_isolation_and_claude_remote_v4_20261112.md",
+          "bytes": 7014,
+          "modified_hst": "2026-11-12T12:16:03-10:00",
+          "sha256_prefix": "eb885eeb5c2a9929"
+        },
+        {
+          "artifact": "$LO_ROOT/reports/windows_shell_validity_audit_20261112.md",
+          "bytes": 5723,
+          "modified_hst": "2026-11-12T11:50:34-10:00",
+          "sha256_prefix": "67275c79f7845ba7"
+        },
+        {
+          "artifact": "$LO_ROOT/reports/iterative_workflow_simulation_20261112.md",
+          "bytes": 4183,
+          "modified_hst": "2026-11-12T11:46:01-10:00",
+          "sha256_prefix": "1e372e1e63caaadd"
+        },
+        {
+          "artifact": "$LO_ROOT/reports/adversarial_access_and_capacity_sweep_20261112.md",
+          "bytes": 6944,
+          "modified_hst": "2026-11-12T11:40:39-10:00",
+          "sha256_prefix": "9da145b7f94b5963"
+        },
+        {
+          "artifact": "$LO_ROOT/reports/one_hour_path_clearing_blueprint.md",
+          "bytes": 2085,
+          "modified_hst": "2026-11-12T11:34:49-10:00",
+          "sha256_prefix": "e0c49b3abc20b059"
+        },
+        {
+          "artifact": "$LO_ROOT/reports/hitl_delegation_strategy.md",
+          "bytes": 4087,
+          "modified_hst": "2026-11-12T11:33:07-10:00",
+          "sha256_prefix": "6058812bff5fdfe3"
+        },
+        {
+          "artifact": "$LO_ROOT/reports/hitl_automation_10_pillars.md",
+          "bytes": 5453,
+          "modified_hst": "2026-11-12T11:30:12-10:00",
+          "sha256_prefix": "9f2e6c935b824259"
+        },
+        {
+          "artifact": "$LO_ROOT/reports/security_baseline_20261112.md",
+          "bytes": 4085,
+          "modified_hst": "2026-11-12T11:29:55-10:00",
+          "sha256_prefix": "78151c2bdcce1968"
+        },
+        {
+          "artifact": "$LO_ROOT/reports/2026-11-12_account-api-inventory.md",
+          "bytes": 6857,
+          "modified_hst": "2026-11-12T00:22:35-10:00",
+          "sha256_prefix": "31998c0fe16df6ac"
+        },
+        {
+          "artifact": "$LO_ROOT/reports/REDACTED-10-workflow-test-2026-11-12.md",
+          "bytes": 2002,
+          "modified_hst": "2026-11-12T00:16:22-10:00",
+          "sha256_prefix": "f3f8ad2fb5b9fb89"
+        }
+      ]
+    },
+    "prompts": {
+      "alias": "$LO_ROOT/prompts",
+      "present": true,
+      "count": 10,
+      "total_bytes": 109550,
+      "recent_artifacts": [
+        {
+          "artifact": "$LO_ROOT/prompts/GEMINI_CARBON_TASK_LOOP_AND_LEAKAGE_SPEC.md",
+          "bytes": 5877,
+          "modified_hst": "2026-11-12T13:52:59-10:00",
+          "sha256_prefix": "7a47113ea67a246f"
+        },
+        {
+          "artifact": "$LO_ROOT/prompts/GEMINI_GEMS_AND_NOTEBOOKLM_DEPLOY_KIT.md",
+          "bytes": 50752,
+          "modified_hst": "2026-11-10T22:54:41-10:00",
+          "sha256_prefix": "ccd727cb22469e41"
+        },
+        {
+          "artifact": "$LO_ROOT/prompts/WORK_ORDER_01_ICA_EMERGENCY.md",
+          "bytes": 7048,
+          "modified_hst": "2026-11-10T22:44:50-10:00",
+          "sha256_prefix": "ac24802637fd6de9"
+        },
+        {
+          "artifact": "$LO_ROOT/prompts/FIVE_JOBS_2026-11-10.md",
+          "bytes": 9169,
+          "modified_hst": "2026-11-10T22:04:09-10:00",
+          "sha256_prefix": "0d524f1394f91211"
+        },
+        {
+          "artifact": "$LO_ROOT/prompts/ORCHESTRATOR_DIRECTIONS_2026-11-10.md",
+          "bytes": 8066,
+          "modified_hst": "2026-11-10T21:40:06-10:00",
+          "sha256_prefix": "bacc55f07729a839"
+        },
+        {
+          "artifact": "$LO_ROOT/prompts/WORK_ORDER_05_OPENING_BRIEF_DE_NOVO_PIPELINE.md",
+          "bytes": 7403,
+          "modified_hst": "2026-11-10T21:25:44-10:00",
+          "sha256_prefix": "348ab93f01b30d2e"
+        },
+        {
+          "artifact": "$LO_ROOT/prompts/WORK_ORDER_04_HRAP10B_TRANSCRIPTS.md",
+          "bytes": 4932,
+          "modified_hst": "2026-11-10T21:25:43-10:00",
+          "sha256_prefix": "402fba2d260474fb"
+        },
+        {
+          "artifact": "$LO_ROOT/prompts/WORK_ORDER_02_COURT_DOC_RETRIEVAL.md",
+          "bytes": 3309,
+          "modified_hst": "2026-11-10T21:02:31-10:00",
+          "sha256_prefix": "18b7c47fcd6ad4fe"
+        },
+        {
+          "artifact": "$LO_ROOT/prompts/WORK_ORDER_03_GCP_MIRROR.md",
+          "bytes": 1970,
+          "modified_hst": "2026-11-10T19:28:04-10:00",
+          "sha256_prefix": "bbb062f4cefca4bf"
+        },
+        {
+          "artifact": "$LO_ROOT/prompts/LOCAL-AGENT-PROMPTS.md",
+          "bytes": 11024,
+          "modified_hst": "2026-11-10T15:14:20-10:00",
+          "sha256_prefix": "eedc6c588a550871"
+        }
+      ]
+    },
+    "pages": {
+      "alias": "$LO_ROOT/pages",
+      "present": true,
+      "count": 18,
+      "total_bytes": 1109374,
+      "recent_artifacts": [
+        {
+          "artifact": "$LO_ROOT/pages/dependency-simulation-graph.html",
+          "bytes": 50607,
+          "modified_hst": "2026-11-12T13:30:29-10:00",
+          "sha256_prefix": "543ee9408eb1cb83"
+        },
+        {
+          "artifact": "$LO_ROOT/pages/workflow-simulator.html",
+          "bytes": 12240,
+          "modified_hst": "2026-11-12T11:46:00-10:00",
+          "sha256_prefix": "1af711d5e5a9f20b"
+        },
+        {
+          "artifact": "$LO_ROOT/pages/waimanalo-moonlight-cube.html",
+          "bytes": 39635,
+          "modified_hst": "2026-11-12T00:04:22-10:00",
+          "sha256_prefix": "d6b294d68aed92e6"
+        },
+        {
+          "artifact": "$LO_ROOT/pages/omnicheck-visual-map.html",
+          "bytes": 90024,
+          "modified_hst": "2026-11-11T22:46:31-10:00",
+          "sha256_prefix": "e9e8738c82bac717"
+        },
+        {
+          "artifact": "$LO_ROOT/pages/lego-voice-paper-studio.html",
+          "bytes": 89064,
+          "modified_hst": "2026-11-11T05:17:26-10:00",
+          "sha256_prefix": "94ac8daf636ac278"
+        },
+        {
+          "artifact": "$LO_ROOT/pages/legal-handoff-1rc-caap.html",
+          "bytes": 18821,
+          "modified_hst": "2026-11-11T00:03:43-10:00",
+          "sha256_prefix": "ed0cfdd6d37da113"
+        },
+        {
+          "artifact": "$LO_ROOT/pages/five-jobs.html",
+          "bytes": 13200,
+          "modified_hst": "2026-11-10T22:04:09-10:00",
+          "sha256_prefix": "2c6e4af49cb10b3f"
+        },
+        {
+          "artifact": "$LO_ROOT/pages/master-goal-graph.html",
+          "bytes": 30504,
+          "modified_hst": "2026-11-10T21:40:06-10:00",
+          "sha256_prefix": "3317925f8b7588c7"
+        },
+        {
+          "artifact": "$LO_ROOT/pages/legal-knowledge-graph-3d.html",
+          "bytes": 659631,
+          "modified_hst": "2026-11-10T21:24:34-10:00",
+          "sha256_prefix": "0ab9e50b9c9dc67d"
+        },
+        {
+          "artifact": "$LO_ROOT/pages/research-results.html",
+          "bytes": 31612,
+          "modified_hst": "2026-11-10T15:23:34-10:00",
+          "sha256_prefix": "f0616c0d40057101"
+        },
+        {
+          "artifact": "$LO_ROOT/pages/tunnel-options.html",
+          "bytes": 8210,
+          "modified_hst": "2026-11-10T15:14:22-10:00",
+          "sha256_prefix": "52aa97e7212c5f13"
+        },
+        {
+          "artifact": "$LO_ROOT/pages/sessions.html",
+          "bytes": 5064,
+          "modified_hst": "2026-11-10T15:14:22-10:00",
+          "sha256_prefix": "cafe63aa7fc63209"
+        }
+      ]
+    },
+    "wire_automation_scripts": {
+      "alias": "$WIRE_BIN",
+      "present": true,
+      "count": 10,
+      "total_bytes": 153065,
+      "recent_artifacts": [
+        {
+          "artifact": "$WIRE_BIN/designated_local_executor.py",
+          "bytes": 21983,
+          "modified_hst": "2026-11-12T14:15:48-10:00",
+          "sha256_prefix": "d90dfe2029aa484d"
+        },
+        {
+          "artifact": "$WIRE_BIN/spacefast_carbon_sync.py",
+          "bytes": 21338,
+          "modified_hst": "2026-11-12T14:15:47-10:00",
+          "sha256_prefix": "04cf159de1335f49"
+        },
+        {
+          "artifact": "$WIRE_BIN/pretool_single_hub_guard.py",
+          "bytes": 12953,
+          "modified_hst": "2026-11-12T14:13:07-10:00",
+          "sha256_prefix": "9a3a5e2b7175405a"
+        },
+        {
+          "artifact": "$WIRE_BIN/live_graph_verifier_server.py",
+          "bytes": 15941,
+          "modified_hst": "2026-11-12T13:30:14-10:00",
+          "sha256_prefix": "be6d0e5bb188999f"
+        },
+        {
+          "artifact": "$WIRE_BIN/seat_a_hub_unlock.py",
+          "bytes": 12978,
+          "modified_hst": "2026-11-12T13:26:43-10:00",
+          "sha256_prefix": "fe771aaf4bb6e068"
+        },
+        {
+          "artifact": "$WIRE_BIN/carbon_leakage_loop.py",
+          "bytes": 29225,
+          "modified_hst": "2026-11-12T13:26:38-10:00",
+          "sha256_prefix": "808f953784830c87"
+        },
+        {
+          "artifact": "$WIRE_BIN/lifeops_workflow_sim.py",
+          "bytes": 19405,
+          "modified_hst": "2026-11-12T11:44:48-10:00",
+          "sha256_prefix": "4c54b176cda8ef63"
+        },
+        {
+          "artifact": "$WIRE_BIN/ensure_account_safety.py",
+          "bytes": 1208,
+          "modified_hst": "2026-11-12T11:35:01-10:00",
+          "sha256_prefix": "a963757eaf6c0ca9"
+        },
+        {
+          "artifact": "$WIRE_BIN/wire_worker.py",
+          "bytes": 16010,
+          "modified_hst": "2026-11-10T15:09:03-10:00",
+          "sha256_prefix": "8ef10841efcc9d40"
+        },
+        {
+          "artifact": "$WIRE_BIN/lifeops-wire-task.xml",
+          "bytes": 2024,
+          "modified_hst": "2026-11-10T15:03:00-10:00",
+          "sha256_prefix": "f32e5b0cab438e89"
+        }
+      ]
+    },
+    "simulations": {
+      "alias": "$LO_ROOT/simulations/lifeops-multi-agent-sim",
+      "present": true,
+      "count": 8,
+      "total_bytes": 113089,
+      "recent_artifacts": [
+        {
+          "artifact": "$LO_ROOT/simulations/lifeops-multi-agent-sim/carbon_loop_feed.json",
+          "bytes": 8058,
+          "modified_hst": "2026-11-12T14:16:12-10:00",
+          "sha256_prefix": "f8a6225c4c6f1484"
+        },
+        {
+          "artifact": "$LO_ROOT/simulations/lifeops-multi-agent-sim/prior_work_digest.json",
+          "bytes": 17129,
+          "modified_hst": "2026-11-12T14:16:12-10:00",
+          "sha256_prefix": "536e5e4c43320d9e"
+        },
+        {
+          "artifact": "$LO_ROOT/simulations/lifeops-multi-agent-sim/manifest.json",
+          "bytes": 931,
+          "modified_hst": "2026-11-12T13:30:29-10:00",
+          "sha256_prefix": "e0f7e58754686cbf"
+        },
+        {
+          "artifact": "$LO_ROOT/simulations/lifeops-multi-agent-sim/HANDOFF_REDACTED.md",
+          "bytes": 4628,
+          "modified_hst": "2026-11-12T13:30:29-10:00",
+          "sha256_prefix": "5748dc1a0d273a9a"
+        },
+        {
+          "artifact": "$LO_ROOT/simulations/lifeops-multi-agent-sim/verify.py",
+          "bytes": 6071,
+          "modified_hst": "2026-11-12T13:30:29-10:00",
+          "sha256_prefix": "981f417d84ed8ab7"
+        },
+        {
+          "artifact": "$LO_ROOT/simulations/lifeops-multi-agent-sim/index.html",
+          "bytes": 50607,
+          "modified_hst": "2026-11-12T13:30:29-10:00",
+          "sha256_prefix": "543ee9408eb1cb83"
+        },
+        {
+          "artifact": "$LO_ROOT/simulations/lifeops-multi-agent-sim/simulation_spec.json",
+          "bytes": 25046,
+          "modified_hst": "2026-11-12T13:30:29-10:00",
+          "sha256_prefix": "3390eef53df40572"
+        },
+        {
+          "artifact": "$LO_ROOT/simulations/lifeops-multi-agent-sim/README.md",
+          "bytes": 619,
+          "modified_hst": "2026-11-12T12:28:03-10:00",
+          "sha256_prefix": "54ad0f3d37702397"
+        }
+      ]
+    },
+    "quarantined_advisories_count": 2
+  },
+  "workflow_bottlenecks_for_carbon_review": [
+    {
+      "workflow_id": "WF-01-STAGE2-HOOK-ACTIVATION",
+      "current_state": "staged_awaiting_operator_apply",
+      "description": "Engine-level ~/.gemini/config/hooks.json + 39->31 plugin trim (unlocks built-in browser subagent for automatic remote session control).",
+      "question_for_carbon": "Verify residual cross-surface risk once hooks.json + plugin trim are active and Claude Desktop MSIX tray process is closed."
+    },
+    {
+      "workflow_id": "WF-02-CLAUDE-DESKTOP-TRAY-RESIDENCY",
+      "current_state": "resident_processes_14",
+      "description": "ChatGPT, Soniox, and Codex UI are already stopped (0 procs); check whether closing MSIX Claude Desktop tray app frees ~1.8 GB RAM and eliminates residual CUA/skip-permissions spawn path while keeping standalone claude-code 2.1.321 CLI intact.",
+      "question_for_carbon": "Confirm dependency separation between MSIX WindowsApps Claude.exe and AppData\\Local\\Claude-Data\\...\\claude-code\\2.1.321\\claude.exe."
+    },
+    {
+      "workflow_id": "WF-03-WIRE-HEARTBEAT-AND-SCHEDULE-SYNC",
+      "current_state": "stale_160320s",
+      "policy_reference": "$WORKSTATION/administration/POLICY.md",
+      "description": "Periodic Spacefast digest upload + listSpaceVersionComments ingestion via Antigravity /schedule vs standalone pythonw wire worker.",
+      "question_for_carbon": "Recommend optimal cadence, failure backoff, and schema evolution for prior-work regression detection."
+    }
+  ],
+  "zero_pii_verification": {
+    "verified": true,
+    "emails_found": 0,
+    "tokens_found": 0,
+    "user_paths_found": 0,
+    "banned_terms_found": 0,
+    "banned_term_Preview": []
+  }
+}

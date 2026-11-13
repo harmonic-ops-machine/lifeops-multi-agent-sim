@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Zero-dependency Cross-Seat, Closed-Loop & Zero-PII Simulation Verifier (v7.0.0).
+"""Zero-dependency Cross-Seat, Closed-Loop & Zero-PII Simulation Verifier (v8.0.0).
 
 Can be executed by ANY independent session or device:
   - Local Seat (Codex V-0, Hermes --safe-mode, Claude Code, PowerShell):
@@ -51,6 +51,7 @@ def verify_bundle(base_url: str | None, base_dir: Path) -> dict:
     spec_raw = fetch_or_read(base_url, base_dir, "simulation_spec.json")
     man_raw = fetch_or_read(base_url, base_dir, "manifest.json")
     feed_raw = fetch_or_read(base_url, base_dir, "carbon_loop_feed.json")
+    digest_raw = fetch_or_read(base_url, base_dir, "prior_work_digest.json")
     spec = json.loads(spec_raw.decode("utf-8"))
     manifest = json.loads(man_raw.decode("utf-8"))
     feed = json.loads(feed_raw.decode("utf-8"))
@@ -58,7 +59,7 @@ def verify_bundle(base_url: str | None, base_dir: Path) -> dict:
     errors: list[str] = []
 
     # 1. Cryptographic SHA-256 parity
-    for fname, raw_b in [("simulation_spec.json", spec_raw), ("carbon_loop_feed.json", feed_raw)]:
+    for fname, raw_b in [("simulation_spec.json", spec_raw), ("carbon_loop_feed.json", feed_raw), ("prior_work_digest.json", digest_raw)]:
         actual = sha256_bytes(raw_b)
         expected = manifest.get("files", {}).get(fname, {}).get("sha256")
         if actual != expected:
@@ -73,6 +74,7 @@ def verify_bundle(base_url: str | None, base_dir: Path) -> dict:
     # 3. Zero-PII airgap verification across public artifacts
     errors.extend(check_zero_pii_bytes("simulation_spec.json", spec_raw))
     errors.extend(check_zero_pii_bytes("carbon_loop_feed.json", feed_raw))
+    errors.extend(check_zero_pii_bytes("prior_work_digest.json", digest_raw))
 
     # 4. Kahn topological sort (DAG acyclicity)
     nodes = spec.get("nodes", [])
@@ -114,6 +116,9 @@ def verify_bundle(base_url: str | None, base_dir: Path) -> dict:
         ("FENCE-CLIP", "CARBON-LOOP"),
         ("VER-GIT", "CARBON-LOOP"),
         ("CARBON-LOOP", "LEG-GATE1"),
+        ("SF-SYNC", "CARBON-LOOP"),
+        ("CARBON-LOOP", "EXEC-FABLE"),
+        ("EXEC-FABLE", "LEG-GATE1"),
         ("VER-GIT", "VAL-HRM"),
         ("VER-GIT", "VAL-CDX"),
         ("VAL-CDX", "LEG-GATE1"),
@@ -124,9 +129,9 @@ def verify_bundle(base_url: str | None, base_dir: Path) -> dict:
             errors.append(f"Missing mandatory isolation edge: {req_u} -> {req_v}")
 
     if len(spec.get("dry_run_self_tests", [])) < 12:
-        errors.append("Expected >=12 PreToolUse adversarial self-tests in v7.0.0")
+        errors.append("Expected >=12 PreToolUse adversarial self-tests in v8.0.0")
     if len(spec.get("leakage_surfaces", [])) < 9:
-        errors.append("Expected >=9 audited leakage surfaces (L1-L9) in v7.0.0")
+        errors.append("Expected >=9 audited leakage surfaces (L1-L9) in v8.0.0")
 
     return {
         "ok": len(errors) == 0,
@@ -134,6 +139,7 @@ def verify_bundle(base_url: str | None, base_dir: Path) -> dict:
         "git_commit": manifest.get("git_head_parent", "staged"),
         "spec_sha256": sha256_bytes(spec_raw),
         "carbon_feed_sha256": sha256_bytes(feed_raw),
+        "prior_work_digest_sha256": sha256_bytes(digest_raw),
         "zero_pii_verified": True if not any("Zero-PII" in e for e in errors) else False,
         "node_count": len(nodes),
         "edge_count": len(spec.get("edges", [])),
@@ -143,7 +149,7 @@ def verify_bundle(base_url: str | None, base_dir: Path) -> dict:
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description="Deterministic Multi-Seat & Zero-PII Verifier v7.0.0")
+    ap = argparse.ArgumentParser(description="Deterministic Multi-Seat & Zero-PII Verifier v8.0.0")
     ap.add_argument("--url", default=None, help="Verify remote HTTPS or loopback instance URL")
     ap.add_argument("--dir", default=str(Path(__file__).resolve().parent), help="Local bundle directory")
     args = ap.parse_args()

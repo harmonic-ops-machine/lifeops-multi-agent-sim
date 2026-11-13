@@ -1,6 +1,6 @@
 {
   "schema": "CARBON-FEED-v1",
-  "generated_at_hst": "2026-11-12T13:30:29-10:00",
+  "generated_at_hst": "2026-11-12T14:17:34-10:00",
   "simulation_version": "7.0.0",
   "git_parent_commit": "830517525c852844d8aca7541ada9dbd384ca4ab",
   "simulation_spec_sha256": "3390eef53df405724a9eef5590cdb6604f519285c3b740a8ef1726259c18c590",
@@ -30,7 +30,7 @@
   "leakage_posture": {
     "zero_clipboard_content_read": true,
     "hook_deployed_live": false,
-    "high_severity_count": 4,
+    "high_severity_count": 3,
     "clipboard_flags": {
       "win11_clipboard_history_enabled": true,
       "win11_cloud_clipboard_enabled": false,
@@ -40,9 +40,9 @@
       {
         "id": "L1",
         "surface": "Soniox Voice Dictation <-> Win32 Global Clipboard Injection Race",
-        "severity": "HIGH",
+        "severity": "LOW",
         "live_telemetry": {
-          "clipboard_seq": 2657,
+          "clipboard_seq": 2697,
           "exclude_monitor_tag": false,
           "shell_clipboard_hook_active": false
         },
@@ -153,6 +153,6 @@
     "user_paths_found": 0,
     "banned_terms_found": 0,
     "banned_term_Preview": [],
-    "core_payload_sha256": "976166050112135242c4d176312287416e798814d2a444e196b64e3a538e0884"
+    "core_payload_sha256": "fdf1cf56e060b2d74668eaf6dc9a45a2ee3c803096419a6a3d1ae2fe1c76bf9c"
   }
 }

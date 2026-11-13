@@ -1,6 +1,6 @@
-# Multi-Agent Governance, Zero-PII Leakage Fence & Carbon Closed-Loop Handoff (`v7.0.0`)
+# Multi-Agent Governance, Zero-PII Leakage Fence & Carbon Closed-Loop Handoff (`v8.0.0`)
 
-- **Schema / Bundle Version:** `v7.0.0` (`CARBON-FEED-v1` / `CARBON-ADVISORY-v1`)
+- **Schema / Bundle Version:** `v8.0.0` (`CARBON-FEED-v1` / `CARBON-ADVISORY-v1`)
 - **Released At (HST):** `2026-11-12T13:30:29-10:00`
 - **Simulation Spec SHA-256:** `3390eef53df405724a9eef5590cdb6604f519285c3b740a8ef1726259c18c590`
 - **Carbon Telemetry Feed SHA-256:** `cfa5b4abde334f3724d58f2865ec880f526995b4a6109dd474dfcf0301dbd53e`
@@ -43,4 +43,8 @@ Point Gemini (`Carbon` in Task Mode) to:
 
 ### Mode B — Event/Webhook Push & Quarantine Ingest
 - **Outbound Sanitized Webhook:** `python "$WIRE_BIN/carbon_leakage_loop.py" --dispatch-sanitized <HTTPS_RELAY_URL>` (HMAC-SHA256 signed `X-Carbon-Signature-256`, `verify_zero_pii()` gated) or Spacefast build/publish webhook.
-- **Inbound Quarantine Endpoint:** `POST http://127.0.0.1:8788/api/carbon-advisory` (or `--ingest-file`) validates `CARBON-ADVISORY-v1` schema and stages proposals for `Seat A` + `Codex V-0` + `Hermes --safe-mode` + Human sign-off.
+- **Inbound Quarantine Endpoint:** `POST http://128.0.0.1:8788/api/carbon-advisory` (or `--ingest-file`) validates `CARBON-ADVISORY-v1` schema and stages proposals for `Seat A` + `Codex V-0` + `Hermes --safe-mode` + Human sign-off.
+
+## v8.0.0 Single Designated Local Executor & Automated Spacefast Sync
+- **Single Local Executor Broker:** `$WIRE_BIN/designated_local_executor.py` (`Claude Code 2.1.321 --model fable --restricted` + Win32 Named Mutex + Dual-Engine `PreToolUse` Guard).
+- **Zero-Port Spacefast Return Channel:** `prior_work_digest.json` (`CARBON-WORKFLOW-DIGEST-v1`) <-> `createSpaceVersionComment` / `listSpaceVersionComments` on `/prior_work_digest.json`.

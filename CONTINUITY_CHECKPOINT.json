@@ -1,8 +1,8 @@
 {
   "schema": "HIGHRES-CONTINUITY-CHECKPOINT-v2",
-  "updated_at_hst": "2026-11-12T17:29:54-10:00",
+  "updated_at_hst": "2026-11-12T17:43:05-10:00",
   "simulation_version": "8.2.0",
-  "sequence_number": 11,
+  "sequence_number": 14,
   "parent_digest_sha256": "54c3a1683c23038abf23478fb9e67206a5b2a5bd0c27e3d929d6ad566f0a4f19",
   "heartbeat_ttl_seconds": 1800,
   "enclave_posture": {
@@ -18,7 +18,7 @@
     "gemini_app_auditor": "Gemini 4 Carbon (Task Mode) via Symmetric Dual-Outbox Spacefast MCP + @GitHub (zero consumer web scraping; Tier 0-1 Always allow 302/485, Tier 2-3 Always ask 183/485)"
   },
   "artifact_hashes": {
-    "manifest_sha256": "f3927ddba4bb74976ae97bd7879f6832ab7236581b301bdfa19cb8828d6e0db0",
+    "manifest_sha256": "8b3327ef469a528b23eb66d21d52cf64f783ee5fe131d5c6724a93f752b96a33",
     "simulation_spec_sha256": "d523ab148033a23c285db3ec7a43280dceba983a15aba4e5cd1fa6511712fa1e",
     "prior_work_digest_sha256": "54c3a1683c23038abf23478fb9e67206a5b2a5bd0c27e3d929d6ad566f0a4f19",
     "carbon_loop_feed_sha256": "61c34ade7e142a6faf625ebcd86dddd0986db5d8cbe86412ff8b1a8ee8e61098"
@@ -31,6 +31,11 @@
   "stall_diagnostic": {
     "no_tool_call_detected": false,
     "termination_reason": "SELF_TEST"
+  },
+  "background_runtime": {
+    "stop_hook_fully_idle": false,
+    "verifier_daemon_port_8788_alive": true,
+    "daemon_reuse_policy": "manage_task is scoped per conversationId; OS child daemons on 127.0.0.1:8788 survive New Chat until IDE exit. Reuse http://127.0.0.1:8788 when alive instead of respawning."
   },
   "quarantined_advisories_count": 3,
   "latest_session_id_prefix": "0d62898d",

@@ -120,27 +120,47 @@ class TrajectoryRefineryTest(unittest.TestCase):
         product_sql = f"-- Query in project demo-proj\n-- leaked={fake_tok}\nSELECT 1;\n".encode("utf-8")
 
         with tempfile.TemporaryDirectory() as tmp:
+            existing_file = Path(tmp) / "live_output.md"
+            existing_file.write_text("# Live Result\n", encoding="utf-8")
+            missing_file = Path(tmp) / "deleted_draft.md"
+
             res = bundler.build_session_upload_bundle(
                 repo_root=Path(tmp),
                 session_id="20261116-bundler-test",
                 session_card_md=card_md,
                 trajectory_bytes=b'{"turn_index":0,"content":"ok"}\n',
                 products={"report_query.sql": product_sql, "large_dump.bin": b"x" * 2048},
+                generated_file_refs=[
+                    existing_file,
+                    missing_file,
+                    "https://github.com/harmonic-ops-machine/lifeops-multi-agent-sim",
+                ],
                 date_slug="2026-11-16",
                 mode="private",
                 large_blob_threshold_bytes=1024,
             )
             mf = res["manifest"]
+            self.assertEqual(mf["schema"], "SESSION-BUNDLE-MANIFEST-v3")
             self.assertTrue(mf["tier_a_secrets_scrubbed"])
             self.assertTrue(mf["tier_b_entities_preserved"])
             self.assertIn("TIER_A:OAUTH_ACCESS_TOKEN", mf["redactions_applied"])
             self.assertEqual(len(mf["products"]), 2)
+            self.assertEqual(len(mf["generated_file_links"]), 3)
+            self.assertEqual(mf["generated_file_links"][0]["availability"], "AVAILABLE_VERIFIED")
+            self.assertIsNotNone(mf["generated_file_links"][0]["sha256"])
+            self.assertEqual(mf["generated_file_links"][1]["availability"], "SUPERSEDED_OR_REMOVED")
+            self.assertEqual(mf["generated_file_links"][2]["availability"], "REMOTE_URI_RECORDED")
 
             bdir = Path(res["bundle_dir"])
             saved_sql = (bdir / "products" / "report_query.sql").read_text(encoding="utf-8")
             self.assertNotIn(fake_tok, saved_sql)
             self.assertIn("<SCRUBBED_OAUTH_ACCESS_TOKEN>", saved_sql)
             self.assertTrue((bdir / "products" / "large_dump.bin.gcs.json").exists())
+
+    def test_v3_rejects_missing_provenance_sections(self) -> None:
+        incomplete_card = "---\nschema: SESSION-BUNDLE-v3\n---\n# Incomplete\n## 1. Runtime Environment & Subagent Provenance\n"
+        errs = bundler.validate_session_card_markdown(incomplete_card)
+        self.assertGreaterEqual(len(errs), 8)
 
 
 if __name__ == "__main__":

@@ -1,8 +1,8 @@
 {
   "schema": "HIGHRES-CONTINUITY-CHECKPOINT-v2",
-  "updated_at_hst": "2026-11-16T13:28:03-10:00",
+  "updated_at_hst": "2026-11-16T13:41:57-10:00",
   "simulation_version": "8.2.0",
-  "sequence_number": 123,
+  "sequence_number": 129,
   "parent_digest_sha256": "54c3a1683c23038abf23478fb9e67206a5b2a5bd0c27e3d929d6ad566f0a4f19",
   "heartbeat_ttl_seconds": 1800,
   "enclave_posture": {
@@ -21,7 +21,7 @@
     "gemini_app_auditor": "Gemini 4 Carbon (Task Mode) via Symmetric Dual-Outbox Spacefast MCP + @GitHub (zero consumer web scraping; Tier 0-1 Always allow 302/485, Tier 2-3 Always ask 183/485)"
   },
   "artifact_hashes": {
-    "manifest_sha256": "8678de2e75a112022eb0899d13ddb3a4e061f5e349813b1858a597e2713ba68d",
+    "manifest_sha256": "27f9d5d37a27490d6f549cec848a766f221cc780b276bfd03e574f83b51ecb6e",
     "simulation_spec_sha256": "d523ab148033a23c285db3ec7a43280dceba983a15aba4e5cd1fa6511712fa1e",
     "prior_work_digest_sha256": "54c3a1683c23038abf23478fb9e67206a5b2a5bd0c27e3d929d6ad566f0a4f19",
     "carbon_loop_feed_sha256": "61c34ade7e142a6faf625ebcd86dddd0986db5d8cbe86412ff8b1a8ee8e61098"
@@ -41,7 +41,7 @@
     "daemon_reuse_policy": "manage_task is scoped per conversationId; OS child daemons on 127.0.0.1:8788 survive New Chat until IDE exit. Reuse http://127.0.0.1:8788 when alive instead of respawning."
   },
   "quarantined_advisories_count": 3,
-  "latest_session_id_prefix": "785ec29d",
+  "latest_session_id_prefix": "e04bf18d",
   "last_termination_reason": "NO_TOOL_CALL",
   "gemini_carbon_resume_instruction": "Read prior_work_digest.json and CONTINUITY_CHECKPOINT.json from https://harmonic-garden.space.fast or harmonic-ops-machine/lifeops-multi-agent-sim, evaluate open workflow bottlenecks, and publish CARBON-ADVISORY-v2 JSON to https://harmonic-carbon-outbox.space.fast/advisory_feed.json."
 }

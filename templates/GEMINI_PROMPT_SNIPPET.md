@@ -1,21 +1,15 @@
-# How Each Session Uses `SESSION_CLOSEOUT_TEMPLATE.md`
+# Quick Reference: Triggering & Automating `SESSION-BUNDLE-v3` Uploads
 
-## 1. Global Instruction Snippet (for Gemini `/u/0/saved-info`, `GEMINI.md`, and `AGENTS.md`)
+Full protocol: [`templates/SESSION_UPLOAD_INSTRUCTIONS.md`](SESSION_UPLOAD_INSTRUCTIONS.md)  
+Canonical template: [`templates/SESSION_CLOSEOUT_TEMPLATE.md`](SESSION_CLOSEOUT_TEMPLATE.md)
+
+## 1. Global Instruction Snippet (Saved in Gemini `/u/0/saved-info`, `GEMINI.md` & `AGENTS.md`)
 
 ```text
-At the conclusion of any session where substantive work, analysis, or configuration took place (or whenever asked to close out / export a session), fill out the canonical template at `templates/SESSION_CLOSEOUT_TEMPLATE.md` from `harmonic-ops-machine/lifeops-enclave-private` (also mirrored in `harmonic-ops-machine/lifeops-multi-agent-sim`), including honest Section 3 entries for any errors, misheard voice inputs, or user corrections so the Separate Refinery Auditor can prune noise and extract root-cause fixes.
+Session full-work upload rule (SESSION-BUNDLE-v3): Whenever substantive work occurs in a session (or when asked to close out / upload), follow templates/SESSION_UPLOAD_INSTRUCTIONS.md and populate templates/SESSION_CLOSEOUT_TEMPLATE.md from harmonic-ops-machine/lifeops-enclave-private (mirrored in harmonic-ops-machine/lifeops-multi-agent-sim). Upload all deliverables under products/ with clickable links and live availability status, specify the exact host/OS/model/workspace environment, list every skill, plugin, MCP tool, and hook used, and document exact accounts, OAuth scopes, and non-secret credential identifiers per app while scrubbing all Tier-A secrets (passwords, tokens, keys, cookies, verification codes).
 ```
 
-## 2. Quick Trigger Phrase (Voice or Text in Any Session)
+## 2. One-Line Trigger Phrases (Voice or Text)
 
-- **English:** `"Fill out the GitHub session closeout template for this session."`
-- **Polish:** `"Wypełnij szablon zamknięcia sesji z GitHuba dla tej rozmowy."`
-
-## 3. Downstream Refinery Mapping (`inbox/raw-sessions` → `main`)
-
-| Template Section | Auditor Action | Output Target on `main` |
-| :--- | :--- | :--- |
-| **YAML Frontmatter + Section 1 + Section 5** | Retains clean verified state & open handoff items | `distilled/<YYYY-MM-DD>_<session_id>.md` |
-| **Section 2 (Dead Ends)** | Strips verbose retry chatter; keeps 1-line anti-pattern note if reusable | Pruned from active prompt context |
-| **Section 3 (Errors & Corrections Table)** | Converts rows into validated `SESSION-RCA-v1` JSON records | `postmortems/<session_id>_rca.json` |
-| **Section 4 (Proposed Patches)** | Formats concrete diff / guardrail proposal in Pull Request | `patches/<session_id>_patch.md` |
+- **English:** `"Upload this entire session and its products using the SESSION-BUNDLE-v3 instructions."`
+- **Polish:** `"Wyślij całą pracę z tej sesji wraz z produktami zgodnie z instrukcją SESSION-BUNDLE-v3."`

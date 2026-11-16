@@ -1,21 +1,17 @@
 #!/usr/bin/env python3
-"""Deterministic Session + Products Self-Upload Bundler & Tiered Secret Scrubber (v8.3.0).
+"""Deterministic Session + Products Self-Upload Bundler & Provenance Verifier (v8.4 / SESSION-BUNDLE-v3).
 
-Implements the two-tier privacy & precision policy decided for HIGHRES:
-  1. Tier-A Cryptographic Secrets (ALWAYS SCRUBBED, even in Private repo):
-     - OAuth bearer/refresh tokens (ya29.*), GitHub PATs (ghp_*, github_pat_*),
-       Google API keys (AIza*), LLM keys (sk-*), OpenSSH/PEM private keys,
-       Cookie headers (SID/HSID/SAPISID), and explicit verification codes.
-  2. Tier-B Operational Entities (PRESERVED in Private repo for full precision;
-     scrubbed ONLY when `--mode public-zero-pii` is explicitly requested):
-     - Account emails, GCP project/bucket IDs, workstation paths, and domain text.
-
-Packages a session and all of its deliverables into:
-  sessions/<YYYY-MM-DD>_<session_id>/
-    ├── SESSION_CARD.md
-    ├── trajectory.jsonl
-    ├── bundle_manifest.json
-    └── products/<deliverables...>
+Implements:
+  1. Full 9-section provenance validation (SESSION-BUNDLE-v3: Environment, Skills/Plugins/MCPs,
+     Accounts/OAuth/Non-Secret Credential Metadata, Generated File Links & Availability,
+     Outcomes, Dead Ends, Forensic Error/ASR Ledger, Guardrail Patches, and Handoff).
+  2. Live file-link availability & SHA-256 verification (`inspect_generated_file_links`).
+  3. Two-Tier Scrubbing:
+     - Tier-A Cryptographic Secrets (ALWAYS SCRUBBED in both Private & Public):
+       passwords, OAuth access/refresh tokens, GitHub PATs, API keys, private keys,
+       auth cookies, and verification codes.
+     - Tier-B Operational Entities (PRESERVED in Private repo; scrubbed ONLY in
+       `public-zero-pii` mode).
 """
 from __future__ import annotations
 
@@ -31,30 +27,33 @@ sys.dont_write_bytecode = True
 
 HST = dt.timezone(dt.timedelta(hours=-10), name="HST")
 
-# Tier-A: Cryptographic secrets & credentials — NEVER allowed in ANY repo (Private or Public)
 TIER_A_SECRET_PATTERNS: list[tuple[str, re.Pattern[str]]] = [
     ("OAUTH_ACCESS_TOKEN", re.compile(r"\bya29\.[A-Za-z0-9._-]{16,}\b")),
+    ("OAUTH_REFRESH_TOKEN", re.compile(r"\b1//[0-9A-Za-z_-]{25,}\b")),
     ("GOOGLE_API_KEY", re.compile(r"\bAIza[0-9A-Za-z_-]{30,}\b")),
     ("GITHUB_CLASSIC_PAT", re.compile(r"\bghp_[A-Za-z0-9]{25,}\b")),
     ("GITHUB_FINE_PAT", re.compile(r"\bgithub_pat_[A-Za-z0-9_]{25,}\b")),
+    ("GITHUB_SERVER_TOKEN", re.compile(r"\bghs_[A-Za-z0-9]{25,}\b")),
     ("GENERIC_API_SECRET", re.compile(r"\bsk-[A-Za-z0-9_-]{25,}\b")),
     ("PRIVATE_KEY_BLOCK", re.compile(r"-----BEGIN [A-Z0-9 ]*PRIVATE KEY-----[\s\S]*?-----END [A-Z0-9 ]*PRIVATE KEY-----")),
     ("GOOGLE_AUTH_COOKIE", re.compile(r"\b(SAPISID|HSID|SSID|__Secure-1PSID)=[^\s;\"']+")),
 ]
 
-# Tier-B: Operational PII/entities — Preserved in Private repo; scrubbed ONLY in public-zero-pii mode
 TIER_B_PUBLIC_PATTERNS: list[tuple[str, re.Pattern[str], str]] = [
     ("EMAIL_ADDRESS", re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}"), "<REDACTED_EMAIL>"),
     ("WINDOWS_USER_PATH", re.compile(r"[A-Za-z]:[/\\]Users[/\\][A-Za-z0-9._-]+", re.I), "$WORKSPACE_HOME"),
 ]
 
-REQUIRED_TEMPLATE_SECTIONS = (
-    "## 1. Uploaded Session Products Inventory",
-    "## 2. Verified Outcomes & Binding Decisions",
-    "## 3. Pruned Noise & Rejected Approaches",
-    "## 4. Forensic Error, ASR & Operator Correction Ledger",
-    "## 5. Candidate System Guardrail / Skill / Hook Patches",
-    "## 6. Next-Session Handoff & Open Approval Gates",
+REQUIRED_V3_SECTIONS = (
+    "## 1. Runtime Environment & Subagent Provenance",
+    "## 2. Skills, Plugins, MCP Servers & Automations Provenance",
+    "## 3. Accounts, OAuth Grants & Non-Secret Credential Provenance",
+    "## 4. Complete Generated & Modified Files Inventory",
+    "## 5. Verified Outcomes & Binding Decisions",
+    "## 6. Pruned Dead Ends & Noise Turn Ranges",
+    "## 7. Forensic Error, ASR & Operator Correction Ledger",
+    "## 8. Candidate System Guardrail / Skill / Hook Patches",
+    "## 9. Next-Session Handoff & Open Approval Gates",
 )
 
 
@@ -63,7 +62,6 @@ def sha256_bytes(data: bytes) -> str:
 
 
 def scrub_text(text: str, mode: str = "private") -> tuple[str, list[str]]:
-    """Apply Tier-A secret scrubbing always, plus Tier-B entity scrubbing if mode == 'public-zero-pii'."""
     if mode not in ("private", "public-zero-pii"):
         raise ValueError(f"Invalid scrub mode: {mode}")
 
@@ -87,12 +85,57 @@ def validate_session_card_markdown(card_md: str) -> list[str]:
     errors: list[str] = []
     if not card_md.lstrip().startswith("---"):
         errors.append("Missing YAML frontmatter header ('---') in SESSION_CARD.md")
-    if "schema: SESSION-BUNDLE-v2" not in card_md:
-        errors.append("Missing 'schema: SESSION-BUNDLE-v2' in SESSION_CARD.md frontmatter")
-    for sec in REQUIRED_TEMPLATE_SECTIONS:
+    if "schema: SESSION-BUNDLE-v3" not in card_md:
+        errors.append("Missing 'schema: SESSION-BUNDLE-v3' in SESSION_CARD.md frontmatter")
+    for sec in REQUIRED_V3_SECTIONS:
         if sec not in card_md:
-            errors.append(f"Missing required template section: {sec}")
+            errors.append(f"Missing required v3 provenance section: {sec}")
     return errors
+
+
+def inspect_generated_file_links(
+    file_refs: list[str | Path],
+    mode: str = "private",
+) -> list[dict[str, Any]]:
+    """Verify whether generated files are still available at their live paths and compute SHA-256."""
+    records: list[dict[str, Any]] = []
+    for ref in file_refs:
+        raw_str = str(ref)
+        if raw_str.startswith(("https://", "http://", "gs://")):
+            clean_uri, _ = scrub_text(raw_str, mode=mode)
+            records.append(
+                {
+                    "live_uri": clean_uri,
+                    "availability": "REMOTE_URI_RECORDED",
+                    "bytes": None,
+                    "sha256": None,
+                }
+            )
+            continue
+
+        p = Path(raw_str.replace("file:///", ""))
+        uri_raw = "file:///" + p.as_posix()
+        clean_uri, _ = scrub_text(uri_raw, mode=mode)
+        if p.exists() and p.is_file():
+            data = p.read_bytes()
+            records.append(
+                {
+                    "live_uri": clean_uri,
+                    "availability": "AVAILABLE_VERIFIED",
+                    "bytes": len(data),
+                    "sha256": sha256_bytes(data),
+                }
+            )
+        else:
+            records.append(
+                {
+                    "live_uri": clean_uri,
+                    "availability": "SUPERSEDED_OR_REMOVED",
+                    "bytes": 0,
+                    "sha256": None,
+                }
+            )
+    return records
 
 
 def build_session_upload_bundle(
@@ -101,12 +144,12 @@ def build_session_upload_bundle(
     session_card_md: str,
     trajectory_bytes: bytes,
     products: dict[str, bytes],
+    generated_file_refs: list[str | Path] | None = None,
     date_slug: str | None = None,
     mode: str = "private",
     large_blob_threshold_bytes: int = 5 * 1024 * 1024,
     gcs_bucket_prefix: str = "gs://enclave-session-refinery",
 ) -> dict[str, Any]:
-    """Create a complete, scrubbed, SHA-256-verified session + products upload directory."""
     d_slug = date_slug or dt.datetime.now(HST).strftime("%Y-%m-%d")
     clean_card, card_redactions = scrub_text(session_card_md, mode=mode)
     val_errors = validate_session_card_markdown(clean_card)
@@ -128,7 +171,6 @@ def build_session_upload_bundle(
     for rel_name, raw_b in sorted(products.items()):
         safe_name = Path(rel_name).name
         if len(raw_b) > large_blob_threshold_bytes:
-            # Offload binary > 5 MB to GCS pointer stub
             digest = sha256_bytes(raw_b)
             gcs_uri = f"{gcs_bucket_prefix.rstrip('/')}/sessions/{session_id}/products/{safe_name}"
             pointer_obj = {
@@ -151,7 +193,6 @@ def build_session_upload_bundle(
                 }
             )
         else:
-            # Scrub text products for Tier-A secrets while preserving exact operational entities in private mode
             try:
                 as_text = raw_b.decode("utf-8")
                 clean_p_txt, p_red = scrub_text(as_text, mode=mode)
@@ -172,12 +213,14 @@ def build_session_upload_bundle(
                 }
             )
 
+    live_links = inspect_generated_file_links(generated_file_refs or [], mode=mode)
+
     card_bytes = clean_card.encode("utf-8")
     (bundle_dir / "SESSION_CARD.md").write_bytes(card_bytes)
     (bundle_dir / "trajectory.jsonl").write_bytes(clean_traj_bytes)
 
     manifest = {
-        "schema": "SESSION-BUNDLE-MANIFEST-v2",
+        "schema": "SESSION-BUNDLE-MANIFEST-v3",
         "session_id": session_id,
         "created_at_hst": dt.datetime.now(HST).isoformat(timespec="seconds"),
         "privacy_mode": mode,
@@ -189,6 +232,7 @@ def build_session_upload_bundle(
             "trajectory.jsonl": {"bytes": len(clean_traj_bytes), "sha256": sha256_bytes(clean_traj_bytes)},
         },
         "products": product_entries,
+        "generated_file_links": live_links,
     }
     (bundle_dir / "bundle_manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     return {"bundle_dir": str(bundle_dir), "manifest": manifest}

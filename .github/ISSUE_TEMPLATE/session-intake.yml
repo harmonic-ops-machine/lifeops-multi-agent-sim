@@ -1,58 +1,62 @@
-name: Session Closeout & Refinery Intake
-description: Standardized per-session intake form for the Separate Refinery Auditor Agent (L1-L4)
-title: "[SESSION-INTAKE] YYYY-MM-DD: <short-topic>"
-labels: ["session-intake", "needs-refinery-audit"]
+name: Session Full-Work Upload (SESSION-BUNDLE-v3)
+description: Standardized full-provenance session + products intake for the Separate Refinery Auditor Agent
+title: "[SESSION-BUNDLE-v3] YYYY-MM-DD: <short-topic>"
+labels: ["session-bundle-v3", "needs-refinery-audit"]
 body:
   - type: dropdown
     id: surface
     attributes:
-      label: Source Surface
+      label: "Agent Surface"
       options:
-        - gemini_app
-        - antigravity
-        - claude_code
+        - gemini_app_web
+        - antigravity_ide
+        - claude_code_cli
         - gemini_cli
     validations:
       required: true
 
-  - type: input
-    id: session_id
+  - type: textarea
+    id: environment_provenance
     attributes:
-      label: Session ID & HST Timestamp
-      placeholder: "20261116-1330-github-refinery (2026-11-16T13:30:00-10:00)"
+      label: "1. Runtime Environment & Subagent Provenance"
+      description: "Host/OS, toolchains, conversationId/thread URL, active workspace, model/tier, permission/sandbox posture, and subagents."
     validations:
       required: true
 
   - type: textarea
-    id: verified_outcomes
+    id: skills_plugins_mcps
     attributes:
-      label: "1. Verified Outcomes & Decisions (L1 Signal — Keep)"
-      description: Final decisions, verified facts, and deliverables/SHAs only.
+      label: "2. Skills, Plugins, MCP Tools & Hooks Used"
+      description: "Exact skills read, plugins exercised, lazy/eager MCP tools called, and hooks triggered."
     validations:
       required: true
 
   - type: textarea
-    id: pruned_dead_ends
+    id: accounts_oauth_credentials
     attributes:
-      label: "2. Discarded Dead Ends & Noise Summary (L1 Prune)"
-      description: Rejected approaches or noisy detours to strip from active context.
-
-  - type: textarea
-    id: errors_and_rca
-    attributes:
-      label: "3. Errors, Friction & User Corrections (L2 Forensic RCA)"
-      description: "Turn | Category (ASR/Context/Tool/Drift/Auth/Config) | Symptom | Root Cause | Best Fix"
+      label: "3. Accounts, OAuth Grants & Non-Secret Credential Metadata (ZERO SECRETS)"
+      description: "Per app: bound email/handle/project, auth mechanism (/u/0/, SSH, OAuth2, ADC, OIDC), public fingerprint/cmdkey target/OAuth scopes. NEVER paste tokens, passwords, private keys, or codes."
     validations:
       required: true
 
   - type: textarea
-    id: proposed_patches
+    id: generated_files_and_links
     attributes:
-      label: "4. Candidate Guardrail / Skill / Rule Updates (L3 Patch)"
-      description: Specific updates to GEMINI.md, AGENTS.md, /u/0/saved-info, or PreToolUse hook.
+      label: "4. Generated Files, Bundled Products & Live Availability Links"
+      description: "Bundled products/ path | file:/// or https:// or gs:// link | AVAILABLE_VERIFIED / BUNDLED_ONLY / REMOVED | Bytes | SHA-256"
+    validations:
+      required: true
 
   - type: textarea
-    id: next_actions
+    id: outcomes_and_dead_ends
     attributes:
-      label: "5. Next Actions & Open Questions (L4 Handoff)"
-      description: Ordered next steps and decisions needed from operator.
+      label: "5-6. Verified Outcomes (L1 Keep) & Pruned Dead Ends (L1 Drop)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: errors_and_patches
+    attributes:
+      label: "7-9. Forensic Error/ASR Ledger (L2), Guardrail Patches (L3) & Handoff (L4)"
+    validations:
+      required: true

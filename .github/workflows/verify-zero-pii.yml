@@ -56,8 +56,9 @@ jobs:
           adv_dir = pathlib.Path("advisories")
           for p in sorted(adv_dir.glob("*.json")):
               obj = json.loads(p.read_text(encoding="utf-8"))
-              if obj.get("schema") not in ("CARBON-ADVISORY-v1", "CARBON-ADVISORY-v2"):
-                  errs.append(f"Unexpected schema in {p}: {obj.get('schema')}")
+              schema = obj.get("schema") or (obj.get("payload") or {}).get("schema")
+              if schema not in ("CARBON-ADVISORY-v1", "CARBON-ADVISORY-v2"):
+                  errs.append(f"Unexpected schema in {p}: {schema}")
 
           if errs:
               print("\n".join(errs), file=sys.stderr)

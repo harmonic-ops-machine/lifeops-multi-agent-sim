@@ -1,4 +1,4 @@
-name: Deterministic Zero-PII & DAG Verification
+name: Deterministic Zero-PII, DAG & Trajectory Refinery Verification
 
 on:
   push:
@@ -27,24 +27,40 @@ jobs:
       - name: Run deterministic Zero-PII & DAG verifier
         run: python verify.py
 
-      - name: Validate Carbon advisory JSON files (if present)
+      - name: Run Trajectory Refinery end-to-end test suite
+        run: python architecture/trajectory-refinery/tests/test_refinery_pipeline.py
+
+      - name: Full-repository Zero-PII & advisory schema gate
         run: |
           python - <<'PY'
-          import json, pathlib, re, sys
-          adv_dir = pathlib.Path("advisories")
+          import json, pathlib, re, subprocess, sys
+
           email_re = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}")
           win_re = re.compile(r"[A-Za-z]:[/\\]Users[/\\][A-Za-z0-9._-]+", re.IGNORECASE)
           tok_re = re.compile(r"\b(ya29\.[A-Za-z0-9_-]{12,}|AIza[0-9A-Za-z_-]{20,}|ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|sk-[A-Za-z0-9_-]{20,})\b")
+
           errs = []
+          tracked = subprocess.check_output(["git", "ls-files"], text=True).splitlines()
+          for rel in tracked:
+              p = pathlib.Path(rel)
+              if not p.is_file() or p.name == "verify-zero-pii.yml":
+                  continue
+              raw = p.read_text(encoding="utf-8", errors="replace")
+              if email_re.search(raw):
+                  errs.append(f"Email pattern detected in {rel}")
+              if win_re.search(raw):
+                  errs.append(f"Windows user path detected in {rel}")
+              if tok_re.search(raw):
+                  errs.append(f"Token pattern detected in {rel}")
+
+          adv_dir = pathlib.Path("advisories")
           for p in sorted(adv_dir.glob("*.json")):
-              raw = p.read_text(encoding="utf-8")
-              if email_re.search(raw) or win_re.search(raw) or tok_re.search(raw):
-                  errs.append(f"Zero-PII violation in {p}")
-              obj = json.loads(raw)
+              obj = json.loads(p.read_text(encoding="utf-8"))
               if obj.get("schema") not in ("CARBON-ADVISORY-v1", "CARBON-ADVISORY-v2"):
                   errs.append(f"Unexpected schema in {p}: {obj.get('schema')}")
+
           if errs:
               print("\n".join(errs), file=sys.stderr)
               sys.exit(1)
-          print(f"Verified {len(list(adv_dir.glob('*.json')))} Carbon advisory JSON file(s) with zero PII.")
+          print(f"Verified {len(tracked)} tracked files and {len(list(adv_dir.glob('*.json')))} advisory JSON file(s) with 0 PII.")
           PY

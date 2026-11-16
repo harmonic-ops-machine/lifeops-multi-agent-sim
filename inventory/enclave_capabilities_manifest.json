@@ -1,0 +1,112 @@
+{
+  "schema": "HIGHRES-ENCLAVE-INVENTORY-v1",
+  "audited_at_hst": "2026-11-16T13:10:00-10:00",
+  "zero_pii_verified": true,
+  "identity_enclave": {
+    "google_primary_hub_alias": "SEAT_A_PRIMARY_HUB",
+    "webview_slot": "/u/0/",
+    "secondary_webview_accounts_present": 0,
+    "gcp_project_alias": "$GCP_ENCLAVE_PROJECT",
+    "github_active_account": "harmonic-ops-machine",
+    "github_ssh_key_title": "HIGHRES-enclave",
+    "github_legacy_account_policy": "DETACHED_CLONE_ONLY_INVARIANT_11",
+    "designated_local_executor": "Claude Code CLI 2.1.321 --model fable"
+  },
+  "counts": {
+    "plugins_total": 49,
+    "plugins_enabled": 15,
+    "plugins_disabled": 34,
+    "skills_active_prompt_slots": 54,
+    "skills_duplicate_pairs_detected": 3,
+    "mcp_servers_active": 6,
+    "mcp_eager_tools": 0,
+    "mcp_lazy_tools": 37,
+    "pretool_hook_invariants": 11,
+    "wire_bin_scripts": 12,
+    "antigravity_scheduled_automations": 0
+  },
+  "enabled_plugins": [
+    "browse",
+    "data-agent-kit-plugin",
+    "egm",
+    "gcalendar",
+    "gdocs",
+    "gdrive",
+    "gdrive-remediator",
+    "gmail",
+    "gsheets",
+    "highres-workspace",
+    "keenable",
+    "parallel",
+    "plugin-manager",
+    "superpowers",
+    "swarm"
+  ],
+  "active_mcp_servers": [
+    {
+      "name": "data-agent-kit-plugin_dak-bigquery",
+      "loading": "lazy",
+      "tool_count": 9
+    },
+    {
+      "name": "data-agent-kit-plugin_dak-data-agent-kit",
+      "loading": "lazy",
+      "tool_count": 0
+    },
+    {
+      "name": "data-agent-kit-plugin_dak-kc",
+      "loading": "lazy",
+      "tool_count": 14
+    },
+    {
+      "name": "data-agent-kit-plugin_dak-notebook",
+      "loading": "lazy",
+      "tool_count": 9
+    },
+    {
+      "name": "keenable_keenable",
+      "loading": "lazy",
+      "tool_count": 2
+    },
+    {
+      "name": "parallel_parallel-search",
+      "loading": "lazy",
+      "tool_count": 3
+    }
+  ],
+  "preferences": {
+    "active_model": "Gemini 4 Carbon (High)",
+    "permission_preset": "AGENT_PERMISSION_PRESET_TURBO",
+    "auto_execution_policy": "CASCADE_COMMANDS_AUTO_EXECUTION_EAGER",
+    "artifact_review_mode": "ARTIFACT_REVIEW_MODE_TURBO",
+    "browser_js_policy": "BROWSER_JS_EXECUTION_POLICY_TURBO",
+    "terminal_sandbox_enabled": false,
+    "compensating_engine_control": "hooks.json -> pretool_single_hub_guard.py (11 deterministic invariants)",
+    "queued_message_delivery": "MESSAGE_DELIVERY_STRATEGY_WHEN_IDLE",
+    "voice_persona": "Arlo (1.0x)",
+    "gemini_web_saved_info_enabled": true,
+    "gemini_web_saved_info_rules_count": 2
+  },
+  "open_findings": [
+    {
+      "id": "ARCH-REFINERY-01",
+      "severity": "high",
+      "summary": "Gemini App @GitHub connector is read-only; deploy Trajectory Refinery (GCS Bronze + Private GitHub Staging + Separate Auditor Agent) to capture, prune, and diagnose work sessions."
+    },
+    {
+      "id": "WF-03-WIRE-SCHEDULER",
+      "severity": "medium",
+      "summary": "wire_worker.py heartbeat is stale (2026-11-10); register lifeops-wire-task.xml when activating 15-minute Drive-export ingestion."
+    },
+    {
+      "id": "SKILL-DEDUP-01",
+      "severity": "low",
+      "summary": "3 skills in ~/.gemini/config/skills duplicate data-agent-kit-plugin skills (accidental-data-loss-prevention, bigquery-graph-author, bigquery-graph-query)."
+    },
+    {
+      "id": "HISTORY-REVIEW-01",
+      "severity": "info",
+      "summary": "Public main re-rooted at v7.0.0 (0 PII); pre-v7 commits retained locally in unpushed branch for later project review."
+    }
+  ]
+}

@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/harmonic-ops-machine/lifeops-multi-agent-sim/architecture/trajectory-refinery/schemas/session_rca.schema.json",
+  "title": "SESSION-RCA-v1",
+  "description": "Structured Root-Cause Analysis & Guardrail Patch specification (L2/L3) emitted by the Separate Auditor Agent.",
+  "type": "object",
+  "required": [
+    "schema",
+    "session_id",
+    "analyzed_at_hst",
+    "auditor_agent",
+    "raw_trace_sha256",
+    "compression_metrics",
+    "incidents",
+    "proposed_patches"
+  ],
+  "properties": {
+    "schema": {
+      "const": "SESSION-RCA-v1"
+    },
+    "session_id": {
+      "type": "string"
+    },
+    "analyzed_at_hst": {
+      "type": "string"
+    },
+    "auditor_agent": {
+      "type": "string"
+    },
+    "raw_trace_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "gcs_raw_archive_uri": {
+      "type": ["string", "null"]
+    },
+    "compression_metrics": {
+      "type": "object",
+      "required": ["total_turns", "kept_signal_turns", "pruned_noise_turns", "noise_reduction_ratio"],
+      "properties": {
+        "total_turns": { "type": "integer", "minimum": 0 },
+        "kept_signal_turns": { "type": "integer", "minimum": 0 },
+        "pruned_noise_turns": { "type": "integer", "minimum": 0 },
+        "noise_reduction_ratio": { "type": "number", "minimum": 0.0, "maximum": 1.0 }
+      }
+    },
+    "incidents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "incident_id",
+          "turn_indices",
+          "root_cause_category",
+          "symptom",
+          "causal_origin",
+          "best_resolution"
+        ],
+        "properties": {
+          "incident_id": { "type": "string" },
+          "turn_indices": {
+            "type": "array",
+            "items": { "type": "integer", "minimum": 0 }
+          },
+          "root_cause_category": {
+            "type": "string",
+            "enum": [
+              "ASR_VOICE_MISRECOGNITION",
+              "MISSING_CONTEXT_OR_MEMORY",
+              "TOOL_OR_CONNECTOR_LIMITATION",
+              "INSTRUCTION_DRIFT_OR_AMBIGUITY",
+              "API_OR_PERMISSION_FAILURE",
+              "PREMATURE_COMPLETION_CLAIM",
+              "ENVIRONMENT_CONFIG_MISMATCH"
+            ]
+          },
+          "symptom": { "type": "string" },
+          "causal_origin": { "type": "string" },
+          "best_resolution": { "type": "string" }
+        }
+      }
+    },
+    "proposed_patches": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["target_surface", "action", "rationale", "patch_snippet"],
+        "properties": {
+          "target_surface": {
+            "type": "string",
+            "enum": [
+              "GEMINI.md",
+              "AGENTS.md",
+              "gemini_web_saved_info",
+              "pretool_single_hub_guard.py",
+              "skill_update",
+              "workflow_script"
+            ]
+          },
+          "action": { "type": "string" },
+          "rationale": { "type": "string" },
+          "patch_snippet": { "type": "string" }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

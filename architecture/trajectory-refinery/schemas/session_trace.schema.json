@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/harmonic-ops-machine/lifeops-multi-agent-sim/architecture/trajectory-refinery/schemas/session_trace.schema.json",
+  "title": "SESSION-TRACE-v1",
+  "description": "Canonical turn-by-turn black-box record (L0 Bronze) for a Gemini App or multi-agent work session.",
+  "type": "object",
+  "required": [
+    "schema",
+    "session_id",
+    "source_surface",
+    "captured_at_hst",
+    "turn_index",
+    "role",
+    "content",
+    "signals"
+  ],
+  "properties": {
+    "schema": {
+      "const": "SESSION-TRACE-v1"
+    },
+    "session_id": {
+      "type": "string",
+      "minLength": 4
+    },
+    "source_surface": {
+      "type": "string",
+      "enum": [
+        "gemini_app_mcp",
+        "gemini_app_docs_export",
+        "gemini_takeout_json",
+        "antigravity_transcript"
+      ]
+    },
+    "captured_at_hst": {
+      "type": "string"
+    },
+    "turn_index": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "role": {
+      "type": "string",
+      "enum": ["user", "assistant", "tool", "system"]
+    },
+    "modality": {
+      "type": "string",
+      "enum": ["text", "voice_asr", "artifact", "tool_result"],
+      "default": "text"
+    },
+    "content": {
+      "type": "string"
+    },
+    "gcs_attachment_uris": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^gs://[a-z0-9._-]+/.+"
+      }
+    },
+    "signals": {
+      "type": "object",
+      "required": ["is_noise_candidate", "is_error_or_correction", "detected_markers"],
+      "properties": {
+        "is_noise_candidate": {
+          "type": "boolean"
+        },
+        "is_error_or_correction": {
+          "type": "boolean"
+        },
+        "detected_markers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

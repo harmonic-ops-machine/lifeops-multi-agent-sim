@@ -1,16 +1,16 @@
 {
   "schema": "HIGHRES-CONTINUITY-CHECKPOINT-v2",
-  "updated_at_hst": "2026-11-16T12:49:37-10:00",
+  "updated_at_hst": "2026-11-16T12:50:29-10:00",
   "simulation_version": "8.2.0",
-  "sequence_number": 108,
+  "sequence_number": 110,
   "parent_digest_sha256": "54c3a1683c23038abf23478fb9e67206a5b2a5bd0c27e3d929d6ad566f0a4f19",
   "heartbeat_ttl_seconds": 1800,
   "enclave_posture": {
     "antigravity_webview_mode": "Single-Account Enclave (/u/0/ primary hub only post-rollover; clean MultiLogin rollover between sessions, /u/0/ pinning mid-flight)",
     "github_machine_account": "harmonic-ops-machine",
     "github_repository": "https://github.com/harmonic-ops-machine/lifeops-multi-agent-sim",
-    "github_ssh_remote": "git@github.com:harmonic-ops-machine/lifeops-multi-agent-sim.git",
-    "github_ssh_status": "LIVE_VERIFIED (Ed25519 key HIGHRES-enclave; global gitconfig & SSH pinned to harmonic-ops-machine; legacy personal GitHub detached & clone-only via Invariant 11)",
+    "github_ssh_transport": "SSH Ed25519 (key HIGHRES-enclave -> github.com/harmonic-ops-machine/lifeops-multi-agent-sim.git)",
+    "github_ssh_status": "LIVE_VERIFIED (global gitconfig & SSH pinned to harmonic-ops-machine; legacy personal GitHub detached & clone-only via Invariant 11)",
     "github_history_review_note": "Public origin/main re-rooted at v7.0.0 (100% Zero-PII across all pushed commits); pre-v7 history retained only in unpushed local branch local-pre-v7-archive \u2014 review later as project progresses.",
     "spacefast_space_id": "spc_4191a55af38b42d986059e576e4b9800",
     "spacefast_public_url": "https://harmonic-garden.space.fast",
@@ -21,7 +21,7 @@
     "gemini_app_auditor": "Gemini 4 Carbon (Task Mode) via Symmetric Dual-Outbox Spacefast MCP + @GitHub (zero consumer web scraping; Tier 0-1 Always allow 302/485, Tier 2-3 Always ask 183/485)"
   },
   "artifact_hashes": {
-    "manifest_sha256": "55bcffb634e271b41427817af8ae399f8ca055826ba8fedb18ca0ac5575ad17d",
+    "manifest_sha256": "19c3f62ced466c2dfd9c6b665846f8167374e0384358b836cd127dc9a7e49f19",
     "simulation_spec_sha256": "d523ab148033a23c285db3ec7a43280dceba983a15aba4e5cd1fa6511712fa1e",
     "prior_work_digest_sha256": "54c3a1683c23038abf23478fb9e67206a5b2a5bd0c27e3d929d6ad566f0a4f19",
     "carbon_loop_feed_sha256": "61c34ade7e142a6faf625ebcd86dddd0986db5d8cbe86412ff8b1a8ee8e61098"

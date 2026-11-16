@@ -17,6 +17,7 @@ if str(SRC) not in sys.path:
 
 import cloudrun_mcp_ingestor as mcp_srv  # noqa: E402
 import refinery_engine as engine  # noqa: E402
+import session_bundler as bundler  # noqa: E402
 
 
 class TrajectoryRefineryTest(unittest.TestCase):
@@ -111,6 +112,35 @@ class TrajectoryRefineryTest(unittest.TestCase):
             receipt = json.loads(call_resp["result"]["content"][0]["text"])
             self.assertEqual(receipt["turns_archived"], 2)
             self.assertTrue((spool / "mcp-live-001.jsonl").exists())
+
+    def test_session_and_products_bundler_tiered_scrub(self) -> None:
+        template_path = ROOT.parents[1] / "templates" / "SESSION_CLOSEOUT_TEMPLATE.md"
+        card_md = template_path.read_text(encoding="utf-8")
+        fake_tok = "ya29." + "A0ARrdaM_example_token_1234567890"
+        product_sql = f"-- Query in project demo-proj\n-- leaked={fake_tok}\nSELECT 1;\n".encode("utf-8")
+
+        with tempfile.TemporaryDirectory() as tmp:
+            res = bundler.build_session_upload_bundle(
+                repo_root=Path(tmp),
+                session_id="20261116-bundler-test",
+                session_card_md=card_md,
+                trajectory_bytes=b'{"turn_index":0,"content":"ok"}\n',
+                products={"report_query.sql": product_sql, "large_dump.bin": b"x" * 2048},
+                date_slug="2026-11-16",
+                mode="private",
+                large_blob_threshold_bytes=1024,
+            )
+            mf = res["manifest"]
+            self.assertTrue(mf["tier_a_secrets_scrubbed"])
+            self.assertTrue(mf["tier_b_entities_preserved"])
+            self.assertIn("TIER_A:OAUTH_ACCESS_TOKEN", mf["redactions_applied"])
+            self.assertEqual(len(mf["products"]), 2)
+
+            bdir = Path(res["bundle_dir"])
+            saved_sql = (bdir / "products" / "report_query.sql").read_text(encoding="utf-8")
+            self.assertNotIn(fake_tok, saved_sql)
+            self.assertIn("<SCRUBBED_OAUTH_ACCESS_TOKEN>", saved_sql)
+            self.assertTrue((bdir / "products" / "large_dump.bin.gcs.json").exists())
 
 
 if __name__ == "__main__":

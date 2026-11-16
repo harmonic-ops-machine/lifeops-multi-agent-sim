@@ -1,0 +1,58 @@
+name: Session Closeout & Refinery Intake
+description: Standardized per-session intake form for the Separate Refinery Auditor Agent (L1-L4)
+title: "[SESSION-INTAKE] YYYY-MM-DD: <short-topic>"
+labels: ["session-intake", "needs-refinery-audit"]
+body:
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Source Surface
+      options:
+        - gemini_app
+        - antigravity
+        - claude_code
+        - gemini_cli
+    validations:
+      required: true
+
+  - type: input
+    id: session_id
+    attributes:
+      label: Session ID & HST Timestamp
+      placeholder: "20261116-1330-github-refinery (2026-11-16T13:30:00-10:00)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: verified_outcomes
+    attributes:
+      label: "1. Verified Outcomes & Decisions (L1 Signal — Keep)"
+      description: Final decisions, verified facts, and deliverables/SHAs only.
+    validations:
+      required: true
+
+  - type: textarea
+    id: pruned_dead_ends
+    attributes:
+      label: "2. Discarded Dead Ends & Noise Summary (L1 Prune)"
+      description: Rejected approaches or noisy detours to strip from active context.
+
+  - type: textarea
+    id: errors_and_rca
+    attributes:
+      label: "3. Errors, Friction & User Corrections (L2 Forensic RCA)"
+      description: "Turn | Category (ASR/Context/Tool/Drift/Auth/Config) | Symptom | Root Cause | Best Fix"
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed_patches
+    attributes:
+      label: "4. Candidate Guardrail / Skill / Rule Updates (L3 Patch)"
+      description: Specific updates to GEMINI.md, AGENTS.md, /u/0/saved-info, or PreToolUse hook.
+
+  - type: textarea
+    id: next_actions
+    attributes:
+      label: "5. Next Actions & Open Questions (L4 Handoff)"
+      description: Ordered next steps and decisions needed from operator.

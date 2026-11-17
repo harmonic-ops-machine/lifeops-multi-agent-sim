@@ -11,7 +11,7 @@
     "github_repository": "https://github.com/harmonic-ops-machine/lifeops-multi-agent-sim",
     "github_ssh_transport": "SSH Ed25519 (key HIGHRES-enclave -> github.com/harmonic-ops-machine/lifeops-multi-agent-sim.git)",
     "github_ssh_status": "LIVE_VERIFIED (global gitconfig & SSH pinned to harmonic-ops-machine; legacy personal GitHub detached & clone-only via Invariant 11)",
-    "github_history_review_note": "Public origin/main re-rooted at v7.0.0 (100% Zero-PII across all pushed commits); pre-v7 history retained only in unpushed local branch local-pre-v7-archive \u2014 review later as project progresses.",
+    "github_history_review_note": "Public origin/main re-rooted at v7.0.0 (100% Zero-PII across all pushed commits); pre-v7 history retained only in unpushed local branch local-pre-v7-archive — review later as project progresses.",
     "spacefast_space_id": "spc_4191a55af38b42d986059e576e4b9800",
     "spacefast_public_url": "https://harmonic-garden.space.fast",
     "spacefast_carbon_outbox_space_id": "spc_3f43447fca9d4d32b0d483fdf63d25fb",
@@ -21,7 +21,7 @@
     "gemini_app_auditor": "Gemini 4 Carbon (Task Mode) via Symmetric Dual-Outbox Spacefast MCP + @GitHub (zero consumer web scraping; Tier 0-1 Always allow 302/485, Tier 2-3 Always ask 183/485)"
   },
   "artifact_hashes": {
-    "manifest_sha256": "27f9d5d37a27490d6f549cec848a766f221cc780b276bfd03e574f83b51ecb6e",
+    "manifest_sha256": "d38970478d4ba472c3f38213b89cb759a1ce5a571828a4b2df7ace7fab791d54",
     "simulation_spec_sha256": "d523ab148033a23c285db3ec7a43280dceba983a15aba4e5cd1fa6511712fa1e",
     "prior_work_digest_sha256": "54c3a1683c23038abf23478fb9e67206a5b2a5bd0c27e3d929d6ad566f0a4f19",
     "carbon_loop_feed_sha256": "61c34ade7e142a6faf625ebcd86dddd0986db5d8cbe86412ff8b1a8ee8e61098"

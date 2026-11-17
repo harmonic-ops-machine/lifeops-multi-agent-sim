@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
-"""Deterministic Session + Products Self-Upload Bundler & Provenance Verifier (v8.4 / SESSION-BUNDLE-v3).
+"""Deterministic Session + Products Self-Upload Bundler, Provenance Verifier & Tiered Secret Scrubber (v8.4 / SESSION-BUNDLE-v3).
 
 Implements:
   1. Full 9-section provenance validation (SESSION-BUNDLE-v3: Environment, Skills/Plugins/MCPs,
      Accounts/OAuth/Non-Secret Credential Metadata, Generated File Links & Availability,
      Outcomes, Dead Ends, Forensic Error/ASR Ledger, Guardrail Patches, and Handoff).
   2. Live file-link availability & SHA-256 verification (`inspect_generated_file_links`).
-  3. Two-Tier Scrubbing:
+  3. Path-traversal & filename-collision hardening (`FIND-06`: `_sanitize_slug`,
+     `_sanitize_product_filename`, and resolved `sessions/` root boundary enforcement).
+  4. Two-Tier Scrubbing:
      - Tier-A Cryptographic Secrets (ALWAYS SCRUBBED in both Private & Public):
-       passwords, OAuth access/refresh tokens, GitHub PATs, API keys, private keys,
-       auth cookies, and verification codes.
+       passwords, OAuth access/refresh tokens, GitHub PATs/server tokens, API keys,
+       Slack tokens, private keys, auth cookies, and verification codes.
      - Tier-B Operational Entities (PRESERVED in Private repo; scrubbed ONLY in
        `public-zero-pii` mode).
 """
@@ -26,19 +28,23 @@ from typing import Any
 sys.dont_write_bytecode = True
 
 HST = dt.timezone(dt.timedelta(hours=-10), name="HST")
+SAFE_SLUG_RE = re.compile(r"[^A-Za-z0-9._-]+")
 
+# Tier-A: Cryptographic secrets & credentials — NEVER allowed in ANY repo (Private or Public)
 TIER_A_SECRET_PATTERNS: list[tuple[str, re.Pattern[str]]] = [
     ("OAUTH_ACCESS_TOKEN", re.compile(r"\bya29\.[A-Za-z0-9._-]{16,}\b")),
-    ("OAUTH_REFRESH_TOKEN", re.compile(r"\b1//[0-9A-Za-z_-]{25,}\b")),
+    ("OAUTH_REFRESH_TOKEN", re.compile(r"\b1//[A-Za-z0-9_-]{20,}\b")),
     ("GOOGLE_API_KEY", re.compile(r"\bAIza[0-9A-Za-z_-]{30,}\b")),
     ("GITHUB_CLASSIC_PAT", re.compile(r"\bghp_[A-Za-z0-9]{25,}\b")),
     ("GITHUB_FINE_PAT", re.compile(r"\bgithub_pat_[A-Za-z0-9_]{25,}\b")),
     ("GITHUB_SERVER_TOKEN", re.compile(r"\bghs_[A-Za-z0-9]{25,}\b")),
     ("GENERIC_API_SECRET", re.compile(r"\bsk-[A-Za-z0-9_-]{25,}\b")),
+    ("SLACK_API_SECRET", re.compile(r"\bxox[baprs]-[A-Za-z0-9-]{10,}\b")),
     ("PRIVATE_KEY_BLOCK", re.compile(r"-----BEGIN [A-Z0-9 ]*PRIVATE KEY-----[\s\S]*?-----END [A-Z0-9 ]*PRIVATE KEY-----")),
     ("GOOGLE_AUTH_COOKIE", re.compile(r"\b(SAPISID|HSID|SSID|__Secure-1PSID)=[^\s;\"']+")),
 ]
 
+# Tier-B: Operational PII/entities — Preserved in Private repo; scrubbed ONLY in public-zero-pii mode
 TIER_B_PUBLIC_PATTERNS: list[tuple[str, re.Pattern[str], str]] = [
     ("EMAIL_ADDRESS", re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}"), "<REDACTED_EMAIL>"),
     ("WINDOWS_USER_PATH", re.compile(r"[A-Za-z]:[/\\]Users[/\\][A-Za-z0-9._-]+", re.I), "$WORKSPACE_HOME"),
@@ -61,7 +67,43 @@ def sha256_bytes(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
+def _sanitize_slug(raw: str, fallback: str = "session") -> str:
+    cleaned = SAFE_SLUG_RE.sub("-", str(raw or ""))
+    cleaned = re.sub(r"\.{2,}", "-", cleaned).strip(".-_")
+    cleaned = cleaned[:128].strip(".-_")
+    return cleaned or fallback
+
+
+def _sanitize_product_filename(rel_name: str, used_names: set[str]) -> str:
+    normalized = str(rel_name or "").strip().replace("\\", "/")
+    parts = [p for p in normalized.split("/") if p and p != "."]
+    if not parts or parts[-1] == "..":
+        raise ValueError(f"Invalid product filename: {rel_name!r}")
+
+    base = SAFE_SLUG_RE.sub("-", parts[-1])
+    base = re.sub(r"\.{2,}", "-", base).strip(".-_")
+    if not base or base in (".", ".."):
+        raise ValueError(f"Invalid product filename: {rel_name!r}")
+
+    candidate = base
+    if candidate in used_names and len(parts) > 1:
+        parent_slug = _sanitize_slug("_".join(parts[:-1]), fallback="sub")
+        candidate = f"{parent_slug}_{base}"
+
+    if candidate in used_names:
+        stem = Path(candidate).stem
+        suffix = Path(candidate).suffix
+        idx = 2
+        while f"{stem}_{idx}{suffix}" in used_names:
+            idx += 1
+        candidate = f"{stem}_{idx}{suffix}"
+
+    used_names.add(candidate)
+    return candidate
+
+
 def scrub_text(text: str, mode: str = "private") -> tuple[str, list[str]]:
+    """Apply Tier-A secret scrubbing always, plus Tier-B entity scrubbing if mode == 'public-zero-pii'."""
     if mode not in ("private", "public-zero-pii"):
         raise ValueError(f"Invalid scrub mode: {mode}")
 
@@ -150,7 +192,10 @@ def build_session_upload_bundle(
     large_blob_threshold_bytes: int = 5 * 1024 * 1024,
     gcs_bucket_prefix: str = "gs://enclave-session-refinery",
 ) -> dict[str, Any]:
-    d_slug = date_slug or dt.datetime.now(HST).strftime("%Y-%m-%d")
+    """Create a complete, scrubbed, SHA-256-verified SESSION-BUNDLE-v3 upload directory."""
+    clean_d_slug = _sanitize_slug(date_slug or dt.datetime.now(HST).strftime("%Y-%m-%d"), fallback="undated")
+    clean_session_id = _sanitize_slug(session_id, fallback="session")
+
     clean_card, card_redactions = scrub_text(session_card_md, mode=mode)
     val_errors = validate_session_card_markdown(clean_card)
     if val_errors:
@@ -160,19 +205,23 @@ def build_session_upload_bundle(
     clean_traj_txt, traj_redactions = scrub_text(traj_txt, mode=mode)
     clean_traj_bytes = clean_traj_txt.encode("utf-8")
 
-    bundle_rel = Path("sessions") / f"{d_slug}_{session_id}"
-    bundle_dir = repo_root / bundle_rel
-    products_dir = bundle_dir / "products"
+    sessions_root = (repo_root / "sessions").resolve()
+    bundle_dir = (sessions_root / f"{clean_d_slug}_{clean_session_id}").resolve()
+    if not bundle_dir.is_relative_to(sessions_root):
+        raise ValueError("Invalid bundle directory path outside sessions root")
+
+    products_dir = (bundle_dir / "products").resolve()
     products_dir.mkdir(parents=True, exist_ok=True)
 
     product_entries: list[dict[str, Any]] = []
     all_redactions = list(card_redactions) + list(traj_redactions)
+    used_names: set[str] = set()
 
     for rel_name, raw_b in sorted(products.items()):
-        safe_name = Path(rel_name).name
+        safe_name = _sanitize_product_filename(rel_name, used_names)
         if len(raw_b) > large_blob_threshold_bytes:
             digest = sha256_bytes(raw_b)
-            gcs_uri = f"{gcs_bucket_prefix.rstrip('/')}/sessions/{session_id}/products/{safe_name}"
+            gcs_uri = f"{gcs_bucket_prefix.rstrip('/')}/sessions/{clean_session_id}/products/{safe_name}"
             pointer_obj = {
                 "pointer_schema": "GCS-PRODUCT-POINTER-v1",
                 "original_filename": safe_name,
@@ -181,7 +230,10 @@ def build_session_upload_bundle(
                 "gcs_uri": gcs_uri,
             }
             ptr_bytes = (json.dumps(pointer_obj, indent=2) + "\n").encode("utf-8")
-            (products_dir / f"{safe_name}.gcs.json").write_bytes(ptr_bytes)
+            ptr_path = (products_dir / f"{safe_name}.gcs.json").resolve()
+            if ptr_path.parent != products_dir:
+                raise ValueError("Invalid GCS pointer output path")
+            ptr_path.write_bytes(ptr_bytes)
             product_entries.append(
                 {
                     "name": safe_name,
@@ -201,7 +253,9 @@ def build_session_upload_bundle(
             except UnicodeDecodeError:
                 final_b = raw_b
 
-            out_p = products_dir / safe_name
+            out_p = (products_dir / safe_name).resolve()
+            if out_p.parent != products_dir:
+                raise ValueError("Invalid product output path")
             out_p.write_bytes(final_b)
             product_entries.append(
                 {
@@ -221,7 +275,7 @@ def build_session_upload_bundle(
 
     manifest = {
         "schema": "SESSION-BUNDLE-MANIFEST-v3",
-        "session_id": session_id,
+        "session_id": clean_session_id,
         "created_at_hst": dt.datetime.now(HST).isoformat(timespec="seconds"),
         "privacy_mode": mode,
         "tier_a_secrets_scrubbed": True,
@@ -234,5 +288,9 @@ def build_session_upload_bundle(
         "products": product_entries,
         "generated_file_links": live_links,
     }
-    (bundle_dir / "bundle_manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    (bundle_dir / "bundle_manifest.json").write_text(
+        json.dumps(manifest, indent=2) + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
     return {"bundle_dir": str(bundle_dir), "manifest": manifest}

@@ -18,6 +18,7 @@ Cryptographically verified, **100% Zero-PII** multi-agent architecture, runtime 
 | **6. Multi-Agent Isolation DAG & Live Continuity** | [`simulation_spec.json`](simulation_spec.json)<br>[`CONTINUITY_CHECKPOINT.json`](CONTINUITY_CHECKPOINT.json)<br>[`verify.py`](verify.py) | `34`-node, `63`-edge topological dependency & leakage-fence graph (`L1`–`L9`) with SHA-256 manifest verification and full-repository Zero-PII scanning. |
 | **7. Account & Architecture Review (`v8.3.1`)** | [`reviews/2026-11-16_GITHUB_ACCOUNT_AND_REPO_REVIEW.md`](reviews/2026-11-16_GITHUB_ACCOUNT_AND_REPO_REVIEW.md) | Comprehensive audit of `harmonic-ops-machine` repositories, Projects v2, security posture, and hardening improvements shipped on branch `improve/enclave-audit-v8.3.1`. |
 | **8. Security & Zero-PII Policy** | [`SECURITY.md`](SECURITY.md) | Zero-PII airgap policy, 4-Tier Subagent Action Destructiveness Gate, keyless OIDC rules, and private advisory reporting process. |
+| **9. Automated GitHub Multi-Agent Orchestrator (`GH-ORCHESTRATOR-v1`)** | [`architecture/github-orchestration/ARCHITECTURE_ORCHESTRATOR.md`](architecture/github-orchestration/ARCHITECTURE_ORCHESTRATOR.md)<br>[`architecture/github-orchestration/orchestrator_control_plane.html`](architecture/github-orchestration/orchestrator_control_plane.html)<br>[`architecture/github-orchestration/src/orchestrator_engine.py`](architecture/github-orchestration/src/orchestrator_engine.py)<br>[`.github/workflows/orchestrator-supervisor.yml`](.github/workflows/orchestrator-supervisor.yml) | Privilege-separated 6-stage DAG orchestrator (`HMAC` + collaborator gate, dual Pydantic/stdlib schemas, `0444` + SHA-256 plan lock, `<= 20%` AST drop gate, 3-strike CI repair, `agent-work/*` umbrella merge policy) and interactive 3-tab control-plane explorer. |
 
 ---
 
@@ -30,7 +31,11 @@ python verify.py
 # 2. Run Trajectory Refinery end-to-end unit & HTTP/MCP contract tests
 python architecture/trajectory-refinery/tests/test_refinery_pipeline.py
 
-# 3. Preview (Dry-Run) GCS Bronze bucket & repository-scoped OIDC provisioning
+# 3. Verify declarative .aw.md workflow parity & Automated GitHub Orchestrator DAG suite
+python architecture/github-orchestration/src/aw_compiler.py --check
+python architecture/github-orchestration/tests/test_orchestrator_engine.py
+
+# 4. Preview (Dry-Run) GCS Bronze bucket & repository-scoped OIDC provisioning
 pwsh -NoProfile -File architecture/trajectory-refinery/scripts/provision_gcs_and_oidc.ps1 -ProjectId "enclave-ci-smoke" -BucketName "enclave-refinery-smoke"
 ```
 

@@ -1,0 +1,81 @@
+{
+  "schema": "HIGHRES-GITHUB-ORCHESTRATION-AUDIT-v1",
+  "audited_at_pst": "2026-11-16T18:06:00-08:00",
+  "zero_pii_verified": true,
+  "account": {
+    "login": "harmonic-ops-machine",
+    "database_id": 356038468,
+    "node_id": "U_kgDOFTi3RA",
+    "account_type": "User",
+    "organizations_count": 0,
+    "app_installation_id": 182713228,
+    "app_slug": "antigravity-for-github",
+    "repository_selection": "all"
+  },
+  "deposited_on_github": {
+    "repositories": [
+      {
+        "full_name": "harmonic-ops-machine/lifeops-multi-agent-sim",
+        "visibility": "public",
+        "main_head_sha": "5b59853ae01af3892fa381fac471b697654a5707",
+        "unmerged_branches": [
+          {
+            "branch": "improve/enclave-audit-v8.3.1",
+            "head_sha": "880b0bcfefb76970eea889d4d6e66c3ae3f6bfea",
+            "open_pr_count": 0,
+            "files_changed_vs_main": 13
+          }
+        ],
+        "passing_ci_runs": 5
+      },
+      {
+        "full_name": "harmonic-ops-machine/lifeops-enclave-private",
+        "visibility": "private",
+        "size_kb": 95,
+        "unattached_cloud_content_access": "403_BLOCKED_VERIFIED",
+        "unattached_cloud_metadata_visible": true
+      },
+      {
+        "full_name": "harmonic-ops-machine/harmonic-test-alpha",
+        "visibility": "private",
+        "size_kb": 7,
+        "unattached_cloud_content_access": "403_BLOCKED_VERIFIED"
+      },
+      {
+        "full_name": "harmonic-ops-machine/harmonic-test-beta",
+        "visibility": "private",
+        "size_kb": 1,
+        "unattached_cloud_content_access": "403_BLOCKED_VERIFIED"
+      }
+    ]
+  },
+  "staged_not_yet_pushed": {
+    "reason": "Conversation 299a0581-0909-42de-9682-0801c990322b was started outside an Antigravity Project; agy-plugin-proxy strips contents:write (HTTP 403).",
+    "public_repo_patch_files": [
+      "inventory/GITHUB_MACHINE_ORCHESTRATION_AUDIT.md",
+      "inventory/github_machine_orchestration_manifest.json",
+      "architecture/github-orchestration/bootstrap_governance.sh",
+      ".github/workflows/agent-orchestration-bus.yml"
+    ],
+    "private_vault_bundle": "sessions/2026-11-16_20261116-1355-github-machine-audit (SESSION-BUNDLE-v3)",
+    "unapplied_github_admin_settings": [
+      "Repository Ruleset on main (currently empty)",
+      "Auto-merge, squash-only, delete_branch_on_merge, allow_update_branch, has_discussions",
+      "10 multi-agent state/actor/priority/gate labels"
+    ]
+  },
+  "capability_probe_counts": {
+    "total_probed": 24,
+    "active_unattached": 11,
+    "project_gated_writes": 6,
+    "hard_app_or_user_ceilings": 7
+  },
+  "pending_decisions": [
+    "DEC-GH-01: Merge improve/enclave-audit-v8.3.1 (880b0bc) with main (5b59853) and refresh manifest.json hashes",
+    "DEC-GH-02: Create free GitHub Organization to separate Proposer bot from CODEOWNERS Approver seat",
+    "DEC-GH-03: Switch App #182713228 from All repositories to Only select repositories to hide enclave metadata",
+    "DEC-GH-04: Retire inaccessible GitHub Project #1 (403) in favor of Sub-Issues + labels + gsheets ledger",
+    "DEC-GH-05: Move high-frequency CONTINUITY_CHECKPOINT.json heartbeats off main branch",
+    "DEC-GH-06: Pin dedicated Drive FOLDER_ID and secondary Calendar ID for SEAT_A_PRIMARY_HUB cross-integration"
+  ]
+}

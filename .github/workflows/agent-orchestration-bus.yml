@@ -1,0 +1,84 @@
+name: Multi-Agent Orchestration Bus & Stale-Lease Reaper
+
+on:
+  workflow_dispatch:
+    inputs:
+      command:
+        description: "Bus operation to run"
+        required: true
+        type: choice
+        options:
+          - reap-stale-leases
+          - audit-governance-posture
+      lease_ttl_minutes:
+        description: "Minutes without issue update before releasing state:claimed"
+        required: false
+        default: "45"
+        type: string
+  repository_dispatch:
+    types:
+      - carbon-advisory
+      - refinery-ingest
+  schedule:
+    - cron: "15 * * * *"
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  orchestrate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Reap expired agent task leases & verify Zero-PII posture
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LEASE_TTL_MINUTES: ${{ inputs.lease_ttl_minutes || '45' }}
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          python3 verify.py
+          python3 - <<'PY'
+          import datetime as dt
+          import json
+          import os
+          import subprocess
+
+          ttl_min = int(os.environ.get("LEASE_TTL_MINUTES", "45"))
+          cutoff = dt.datetime.now(dt.timezone.utc) - dt.timedelta(minutes=ttl_min)
+
+          raw = subprocess.check_output(
+              [
+                  "gh", "issue", "list",
+                  "--state", "open",
+                  "--label", "state:claimed",
+                  "--limit", "100",
+                  "--json", "number,title,updatedAt,labels"
+              ],
+              text=True,
+          )
+          claimed = json.loads(raw)
+          released = []
+          for item in claimed:
+              updated = dt.datetime.fromisoformat(item["updatedAt"].replace("Z", "+00:00"))
+              if updated < cutoff:
+                  num = str(item["number"])
+                  subprocess.check_call(
+                      [
+                          "gh", "issue", "edit", num,
+                          "--remove-label", "state:claimed",
+                          "--add-label", "state:ready",
+                      ]
+                  )
+                  subprocess.check_call(
+                      [
+                          "gh", "issue", "comment", num,
+                          "--body",
+                          f"Automated lease reaper: returned `#${num}` to `state:ready` after >{ttl_min}m idle.",
+                      ]
+                  )
+                  released.append(item["number"])
+          print(json.dumps({"checked": len(claimed), "released": released}))
+          PY

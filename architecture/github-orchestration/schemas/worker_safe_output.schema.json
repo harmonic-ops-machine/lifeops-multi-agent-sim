@@ -1,0 +1,145 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/harmonic-ops-machine/lifeops-multi-agent-sim/architecture/github-orchestration/schemas/worker_safe_output.schema.json",
+  "title": "WorkerSafeOutputAndTelemetry",
+  "description": "Privilege-separated worker output envelope, bounded 3-attempt CI repair ledger, and OpenTelemetry-compatible span schema.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "tracker_id",
+    "task_id",
+    "worker_branch",
+    "target_umbrella_branch",
+    "plan_sha256",
+    "changed_paths",
+    "verification",
+    "ci_repair",
+    "telemetry"
+  ],
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "GH-WORKER-SAFE-OUTPUT-v1"
+    },
+    "tracker_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._:-]{6,128}$"
+    },
+    "task_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._-]+$"
+    },
+    "worker_branch": {
+      "type": "string",
+      "pattern": "^agent-worker/[A-Za-z0-9._/-]+$"
+    },
+    "target_umbrella_branch": {
+      "type": "string",
+      "pattern": "^agent-work/[A-Za-z0-9._/-]+$"
+    },
+    "bundle_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "plan_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "changed_paths": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "unit_tests_passed",
+        "zero_pii_passed",
+        "ast_retention_passed",
+        "max_ast_symbol_drop_ratio",
+        "judge_approved"
+      ],
+      "properties": {
+        "unit_tests_passed": { "type": "boolean" },
+        "zero_pii_passed": { "type": "boolean" },
+        "ast_retention_passed": { "type": "boolean" },
+        "max_ast_symbol_drop_ratio": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "dropped_symbols": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "judge_approved": { "type": "boolean" }
+      }
+    },
+    "ci_repair": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "attempts_used",
+        "max_attempts",
+        "halted_for_human"
+      ],
+      "properties": {
+        "attempts_used": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3
+        },
+        "max_attempts": {
+          "type": "integer",
+          "const": 3
+        },
+        "halted_for_human": {
+          "type": "boolean"
+        },
+        "escalation_label": {
+          "type": "string",
+          "enum": ["none", "state:blocked"]
+        },
+        "annotations_digest": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "telemetry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model_tier",
+        "prompt_tokens",
+        "completion_tokens",
+        "tool_calls",
+        "checkpoint_sha",
+        "heartbeat_utc"
+      ],
+      "properties": {
+        "model_tier": {
+          "type": "string",
+          "enum": [
+            "fast-discovery",
+            "frontier-planner",
+            "code-worker",
+            "judge-review"
+          ]
+        },
+        "prompt_tokens": { "type": "integer", "minimum": 0 },
+        "completion_tokens": { "type": "integer", "minimum": 0 },
+        "tool_calls": { "type": "integer", "minimum": 0 },
+        "checkpoint_sha": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{7,40}$"
+        },
+        "heartbeat_utc": { "type": "string" }
+      }
+    }
+  }
+}

@@ -34,6 +34,11 @@ jobs:
       - name: Run Trajectory Refinery end-to-end test suite
         run: python architecture/trajectory-refinery/tests/test_refinery_pipeline.py
 
+      - name: Verify declarative agent workflow compilation & Orchestrator DAG suite
+        run: |
+          python architecture/github-orchestration/src/aw_compiler.py --check
+          python architecture/github-orchestration/tests/test_orchestrator_engine.py
+
       - name: Verify GCS & OIDC IaC dry-run provisioning script
         run: |
           pwsh -NoProfile -File architecture/trajectory-refinery/scripts/provision_gcs_and_oidc.ps1 \

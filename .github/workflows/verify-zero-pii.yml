@@ -18,6 +18,8 @@ permissions:
 
 jobs:
   verify-zero-pii:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -80,3 +82,43 @@ jobs:
               sys.exit(1)
           print(f"Verified {len(tracked)} tracked files and {len(list(adv_dir.glob('*.json')))} advisory JSON file(s) with 0 PII.")
           PY
+
+  deploy-pages:
+    needs: verify-zero-pii
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    concurrency:
+      group: pages-deploy
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Stage verified Zero-PII static site bundle
+        run: |
+          rm -rf _site && mkdir -p _site _site/advisories _site/architecture/github-orchestration
+          for f in index.html CONTINUITY_CHECKPOINT.json prior_work_digest.json carbon_loop_feed.json simulation_spec.json manifest.json HANDOFF_REDACTED.md README.md; do
+            if [ -f "$f" ]; then cp "$f" "_site/$f"; fi
+          done
+          cp -r advisories/*.json _site/advisories/ 2>/dev/null || true
+          cp architecture/github-orchestration/*.md architecture/github-orchestration/*.json _site/architecture/github-orchestration/ 2>/dev/null || true
+          touch _site/.nojekyll
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

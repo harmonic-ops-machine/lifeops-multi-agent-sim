@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Orchestrator Control Plane — GH-ORCHESTRATOR-v1</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js" onerror="var s=document.createElement('script');s.src='https://cdn.tailwindcss.com';document.head.appendChild(s);"></script>
+</head>
+<body class="bg-transparent text-[var(--foreground)] antialiased p-0 m-0">
+  <div id="app-shell" class="py-2 space-y-3 select-none">
+    <!-- Top Tab Bar -->
+    <div class="flex items-center justify-between gap-2 pb-2 border-b border-[var(--card-border)]">
+      <div class="flex items-center gap-1.5" role="tablist">
+        <button id="tab-btn-dag" onclick="switchTab('dag')" class="px-2.5 py-1 rounded text-xs font-medium bg-[var(--primary)] text-[var(--primary-foreground)] transition-colors">
+          6-Stage DAG Flow
+        </button>
+        <button id="tab-btn-adj" onclick="switchTab('adj')" class="px-2.5 py-1 rounded text-xs font-medium bg-[var(--card)] text-[var(--muted-foreground)] border border-[var(--card-border)] hover:text-[var(--foreground)] transition-colors">
+          4 Hardened Adjustments
+        </button>
+        <button id="tab-btn-sim" onclick="switchTab('sim')" class="px-2.5 py-1 rounded text-xs font-medium bg-[var(--card)] text-[var(--muted-foreground)] border border-[var(--card-border)] hover:text-[var(--foreground)] transition-colors">
+          Guardrail Simulator
+        </button>
+      </div>
+      <span id="live-badge" class="text-xs font-mono px-2 py-0.5 rounded border border-[var(--card-border)] bg-[var(--card)] text-[var(--success)]">
+        Zero-PII · 20/20 Tests
+      </span>
+    </div>
+
+    <!-- TAB 1: 6-Stage DAG Flow -->
+    <div id="panel-dag" class="space-y-2.5">
+      <div class="grid grid-cols-6 gap-1.5" id="stage-grid"></div>
+      <div id="stage-detail" class="p-3 rounded border border-[var(--card-border)] bg-[var(--card)] space-y-2"></div>
+    </div>
+
+    <!-- TAB 2: 4 Hardened Adjustments -->
+    <div id="panel-adj" class="hidden space-y-2">
+      <div class="grid grid-cols-2 gap-2" id="adj-grid"></div>
+      <div id="adj-detail" class="p-2.5 rounded border border-[var(--card-border)] bg-[var(--card)] text-xs space-y-1"></div>
+    </div>
+
+    <!-- TAB 3: Interactive Guardrail Simulator -->
+    <div id="panel-sim" class="hidden space-y-2.5">
+      <div class="flex flex-wrap gap-1.5" id="sim-buttons"></div>
+      <div id="sim-output" class="p-3 rounded border border-[var(--card-border)] bg-[var(--card)] space-y-2 text-xs"></div>
+    </div>
+  </div>
+
+  <script>
+    // Standalone browser / GitHub Pages fallback when opened outside Antigravity <agent-embed>
+    if (!getComputedStyle(document.documentElement).getPropertyValue("--foreground").trim()) {
+      const root = document.documentElement.style;
+      Object.entries({
+        "--background": "#0b0f17",
+        "--foreground": "#f3f4f6",
+        "--card": "#111827",
+        "--card-border": "#1f2937",
+        "--primary": "#2563eb",
+        "--primary-foreground": "#ffffff",
+        "--secondary": "#1e293b",
+        "--muted-foreground": "#9ca3af",
+        "--code-foreground": "#93c5fd",
+        "--success": "#34d399",
+        "--warning": "#fbbf24",
+        "--error": "#f87171"
+      }).forEach(([k, v]) => root.setProperty(k, v));
+      document.body.style.backgroundColor = "#0b0f17";
+      document.body.style.padding = "1rem";
+      document.body.style.fontFamily = "Inter, ui-sans-serif, system-ui, -apple-system, sans-serif";
+      const shell = document.getElementById("app-shell");
+      if (shell) {
+        shell.style.maxWidth = "56rem";
+        shell.style.margin = "0 auto";
+      }
+    }
+
+    const STAGES = [
+      {
+        num: "01",
+        short: "Admission",
+        title: "Signed Ingress & Collaborator Gate",
+        token: "Pre-LLM Gate (0 Write)",
+        file: "orchestrator_engine.py · webhook_gateway.py",
+        rule: "Validates X-Hub-Signature-256 (hmac.compare_digest) + OWNER/MEMBER/COLLABORATOR role before parsing prompts or invoking any model.",
+        metric: "Untrusted actors -> HTTP 401 / 403"
+      },
+      {
+        num: "02",
+        short: "Schemas",
+        title: "Typed SubTask & OrchestrationPlan",
+        token: "JSON Schema 2020-12",
+        file: "schemas/orchestration_plan.schema.json",
+        rule: "Dual Pydantic v2 + stdlib models enforce tracker_id correlation, non-empty acceptance_criteria, and umbrella_branch matching agent-work/*.",
+        metric: "Zero raw chat history handoffs"
+      },
+      {
+        num: "03",
+        short: "0444 Lock",
+        title: "Single-Pass Discovery & Locked Plan",
+        token: "contents: read",
+        file: "discover_repo_context() · lock_plan_file()",
+        rule: "Indexes repo once (.orchestrator/context_summary.json), verifies Kahn DAG acyclicity + disjoint owned_paths, and locks plan (chmod 0444 + SHA-256).",
+        metric: "Sibling path overlaps -> rejected"
+      },
+      {
+        num: "04",
+        short: "Fan-Out",
+        title: "Sandboxed Parallel Wave Workers",
+        token: "contents: read (Isolated)",
+        file: "orchestrator-supervisor.yml · execute_plan()",
+        rule: "Dispatches unblocked wave peers concurrently via Actions matrix or asyncio.gather across isolated git worktrees branched off agent-work/*.",
+        metric: "Zero direct worker write tokens"
+      },
+      {
+        num: "05",
+        short: "AST + CI",
+        title: "AST Retention & 3-Strike CI Repair",
+        token: "safe-outputs Verifier",
+        file: "check_ast_retention() · CIRepairController",
+        rule: "Blocks Python diffs dropping >20% of existing functions/classes (even if decoy functions are added). Caps CI auto-repair at 3 attempts + token breaker.",
+        metric: "Strike 4 -> halt + state:blocked"
+      },
+      {
+        num: "06",
+        short: "Umbrella",
+        title: "Umbrella Merge, OTel & Reaper",
+        token: "safe-outputs (Scoped Write)",
+        file: "validate_merge_target() · agent-orchestration-bus.yml",
+        rule: "Restricts automated worker merges strictly to agent-work/* (main hard-blocked), logs OTel JSONL spans, reaps stalled leases, then opens 1 PR to main.",
+        metric: "main protected by Ruleset #27428468"
+      }
+    ];
+
+    const ADJUSTMENTS = [
+      {
+        id: "lock",
+        title: "1. Git Strips chmod 0444",
+        spec: "Reference Doc: Lock plan via chmod 0444 + git checkpoint.",
+        fix: "Git trees only store 100644/100755 and same-UID containers can chmod +w. Added dual enforcement: runtime 0444 in worktrees + SHA-256 / diff rejection in safe-outputs."
+      },
+      {
+        id: "proj",
+        title: "2. Projects v2 GraphQL 403",
+        spec: "Reference Doc: Log traces on a GitHub Project board or OTel.",
+        fix: "App installation #182713228 returns null on ProjectV2. Wired in-repo OTel JSONL spans (.orchestrator/telemetry/spans.jsonl), $GITHUB_STEP_SUMMARY, and Issue state:* labels."
+      },
+      {
+        id: "aw",
+        title: "3. Portable .aw.md Compiler",
+        spec: "Reference Doc: Compile declarative .md workflows via gh aw compile.",
+        fix: "Authored gh-aw compatible issue-supervisor.md AND built deterministic stdlib aw_compiler.py (with include-hidden-files: true for .orchestrator/) verified in CI."
+      },
+      {
+        id: "stdlib",
+        title: "4. Dual Pydantic / Bare 3.12",
+        spec: "Reference Doc: Pydantic BaseModel schemas + FastAPI/LangGraph.",
+        fix: "verify-zero-pii.yml runs bare Python 3.12 with 0 pip installs. Models auto-bind Pydantic v2 when installed and run identically on stdlib dataclasses in Actions CI."
+      }
+    ];
+
+    const SCENARIOS = [
+      {
+        name: "Valid Wave-0 Worker",
+        verdict: "PASS -> MERGE TO agent-work/issue-42",
+        ok: true,
+        gate: "All 6 Gates Green",
+        detail: "Changed mod_alpha/alpha.py inside owned_paths, 0% AST symbol drop, plan SHA-256 intact, Zero-PII clean. Merged into agent-work/issue-42; main untouched."
+      },
+      {
+        name: "Drop 40% AST Symbols",
+        verdict: "BLOCKED BY STAGE 5 (AST Gate)",
+        ok: false,
+        gate: "check_ast_retention(max_drop_ratio=0.20)",
+        detail: "Worker deleted 2 of 5 existing functions (40% > 20%) and added a decoy function. Existing-symbol set diff caught ['fn:Ledger.close', 'fn:fn_two']."
+      },
+      {
+        name: "4th CI Failure Strike",
+        verdict: "HALTED -> LABELED state:blocked",
+        ok: false,
+        gate: "CIRepairController(max_attempts=3)",
+        detail: "Attempts 1..3 dispatched scoped repair prompts from check-run annotations. Failure #4 tripped circuit breaker, removed state:claimed, and escalated to human."
+      },
+      {
+        name: "Direct Merge to main",
+        verdict: "BLOCKED BY STAGE 6 + RULESET",
+        ok: false,
+        gate: "validate_merge_target(allowed=['agent-work/*'])",
+        detail: "Automated merge into protected branch 'main' rejected in Python policy gate and enforced server-side by active GitHub Ruleset #27428468."
+      },
+      {
+        name: "Escape owned_paths / Plan",
+        verdict: "BLOCKED BY STAGE 4 SAFE-OUTPUTS",
+        ok: false,
+        gate: "validate_worker_diff_scope()",
+        detail: "Worker touched pkg/auth/secret.py outside owned_paths=['pkg/billing/**'] or altered .orchestrator/plans/*.plan.json SHA-256. Bundle discarded."
+      }
+    ];
+
+    let activeStage = 0;
+    let activeAdj = 0;
+    let activeSim = 0;
+
+    function switchTab(tab) {
+      ["dag", "adj", "sim"].forEach((k) => {
+        document.getElementById("panel-" + k).classList.toggle("hidden", k !== tab);
+        const btn = document.getElementById("tab-btn-" + k);
+        if (k === tab) {
+          btn.className = "px-2.5 py-1 rounded text-xs font-medium bg-[var(--primary)] text-[var(--primary-foreground)] transition-colors";
+        } else {
+          btn.className = "px-2.5 py-1 rounded text-xs font-medium bg-[var(--card)] text-[var(--muted-foreground)] border border-[var(--card-border)] hover:text-[var(--foreground)] transition-colors";
+        }
+      });
+    }
+
+    function renderStages() {
+      const grid = document.getElementById("stage-grid");
+      grid.innerHTML = STAGES.map((s, idx) => {
+        const active = idx === activeStage;
+        return `<button onclick="activeStage=${idx};renderStages()" class="text-left p-2 rounded border transition-colors ${
+          active
+            ? "border-[var(--primary)] bg-[var(--secondary)] text-[var(--foreground)]"
+            : "border-[var(--card-border)] bg-[var(--card)] text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+        }">
+          <div class="text-xs font-mono opacity-75">${s.num}</div>
+          <div class="text-xs font-semibold truncate">${s.short}</div>
+        </button>`;
+      }).join("");
+
+      const cur = STAGES[activeStage];
+      document.getElementById("stage-detail").innerHTML = `
+        <div class="flex items-center justify-between gap-2">
+          <div class="text-xs font-semibold text-[var(--foreground)]">Stage ${cur.num} — ${cur.title}</div>
+          <span class="text-xs font-mono px-2 py-0.5 rounded border border-[var(--card-border)] text-[var(--muted-foreground)]">${cur.token}</span>
+        </div>
+        <div class="text-xs text-[var(--muted-foreground)] leading-relaxed">${cur.rule}</div>
+        <div class="flex items-center justify-between pt-1 border-t border-[var(--card-border)] text-xs font-mono">
+          <span class="text-[var(--code-foreground)]">${cur.file}</span>
+          <span class="text-[var(--success)]">${cur.metric}</span>
+        </div>
+      `;
+    }
+
+    function renderAdjustments() {
+      const grid = document.getElementById("adj-grid");
+      grid.innerHTML = ADJUSTMENTS.map((a, idx) => {
+        const active = idx === activeAdj;
+        return `<button onclick="activeAdj=${idx};renderAdjustments()" class="text-left p-2 rounded border transition-colors ${
+          active
+            ? "border-[var(--primary)] bg-[var(--secondary)] text-[var(--foreground)]"
+            : "border-[var(--card-border)] bg-[var(--card)] text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+        }">
+          <div class="text-xs font-semibold">${a.title}</div>
+        </button>`;
+      }).join("");
+
+      const cur = ADJUSTMENTS[activeAdj];
+      document.getElementById("adj-detail").innerHTML = `
+        <div class="text-[var(--muted-foreground)]"><strong class="text-[var(--foreground)]">Baseline:</strong> ${cur.spec}</div>
+        <div class="text-[var(--foreground)] pt-1"><strong class="text-[var(--warning)]">Hardened Fix:</strong> ${cur.fix}</div>
+      `;
+    }
+
+    function renderSim() {
+      const btns = document.getElementById("sim-buttons");
+      btns.innerHTML = SCENARIOS.map((sc, idx) => {
+        const active = idx === activeSim;
+        return `<button onclick="activeSim=${idx};renderSim()" class="px-2.5 py-1 rounded border text-xs transition-colors ${
+          active
+            ? "border-[var(--primary)] bg-[var(--secondary)] text-[var(--foreground)] font-medium"
+            : "border-[var(--card-border)] bg-[var(--card)] text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+        }">${sc.name}</button>`;
+      }).join("");
+
+      const cur = SCENARIOS[activeSim];
+      const badgeColor = cur.ok ? "text-[var(--success)]" : "text-[var(--error)]";
+      document.getElementById("sim-output").innerHTML = `
+        <div class="flex items-center justify-between gap-2">
+          <span class="font-mono font-semibold ${badgeColor}">${cur.verdict}</span>
+          <span class="font-mono text-[var(--muted-foreground)]">${cur.gate}</span>
+        </div>
+        <div class="text-[var(--muted-foreground)] leading-relaxed">${cur.detail}</div>
+      `;
+    }
+
+    renderStages();
+    renderAdjustments();
+    renderSim();
+  </script>
+</body>
+</html>

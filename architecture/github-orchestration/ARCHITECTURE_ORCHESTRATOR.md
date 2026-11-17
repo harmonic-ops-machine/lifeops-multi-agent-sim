@@ -1,6 +1,6 @@
 # Automated GitHub Multi-Agent Orchestrator (`GH-ORCHESTRATOR-v1`)
 
-Separates **stateless/checkpointed coordination** from **isolated read-only worker execution** across both GitHub-native Actions workflows (`.github/workflows/issue-supervisor.md` -> `orchestrator-supervisor.yml`) and external state-graph webhook runtimes (`webhook_gateway.py`).
+Separates **stateless/checkpointed coordination** from **isolated read-only worker execution** across both GitHub-native Actions workflows (`.github/workflows/issue-supervisor.md` -> `orchestrator-supervisor.yml`) and external state-graph webhook runtimes (`webhook_gateway.py`). Includes an interactive 3-tab control-plane & guardrail explorer at [`orchestrator_control_plane.html`](orchestrator_control_plane.html).
 
 ## 1. Execution Foundations & Topologies
 

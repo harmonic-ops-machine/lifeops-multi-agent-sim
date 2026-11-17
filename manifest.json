@@ -18,19 +18,19 @@
       "bytes": 9428
     },
     "carbon_loop_feed.json": {
-      "sha256": "61c34ade7e142a6faf625ebcd86dddd0986db5d8cbe86412ff8b1a8ee8e61098",
-      "bytes": 8062
+      "sha256": "2e6198904a7fa9a658a811e97f694b266dcb3f256c13005b770b68f57c8423d1",
+      "bytes": 8066
     },
     "prior_work_digest.json": {
-      "sha256": "54c3a1683c23038abf23478fb9e67206a5b2a5bd0c27e3d929d6ad566f0a4f19",
-      "bytes": 18198
+      "sha256": "2ed1db54e3e11a20045fc17bb9762390bd2747bcbbd7ed6e2cd387ba48a54963",
+      "bytes": 19252
     },
     "HANDOFF_REDACTED.md": {
       "sha256": "0df650a07e42cdf8b5da7bdaa83351c846566334d9c0ed08d9c0d5ebd94a16dd",
       "bytes": 5235
     },
     "CONTINUITY_CHECKPOINT.json": {
-      "sha256": "024119163219ca9061555b52a73dbbb3d2c4dd2f74cd1f072336bb775f432e1c",
+      "sha256": "459fdbfce00fcae3345e1ce38cd641eb25eff0ee9aa42073985880e62b82c696",
       "bytes": 3257
     },
     "advisories/CA-20261112-001.json": {

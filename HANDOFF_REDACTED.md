@@ -43,7 +43,8 @@ Point Gemini (`Carbon` in Task Mode) to:
 
 ### Mode B — Event/Webhook Push & Quarantine Ingest
 - **Outbound Sanitized Webhook:** `python "$WIRE_BIN/carbon_leakage_loop.py" --dispatch-sanitized <HTTPS_RELAY_URL>` (HMAC-SHA256 signed `X-Carbon-Signature-256`, `verify_zero_pii()` gated) or Spacefast build/publish webhook.
-- **Inbound Quarantine Endpoint:** `POST http://128.0.0.1:8788/api/carbon-advisory` (or `--ingest-file`) validates `CARBON-ADVISORY-v1` schema and stages proposals for `Seat A` + `Codex V-0` + `Hermes --safe-mode` + Human sign-off.
+- **Canonical Manifest SSOT (`v8.2.0+`):** Exact SHA-256 digests and byte lengths for every released bundle artifact are tracked in [`manifest.json`](manifest.json).
+- **Inbound Quarantine Endpoint:** `POST http://127.0.0.1:8788/api/carbon-advisory` (or `--ingest-file`) validates `CARBON-ADVISORY-v1` schema and stages proposals for `Seat A` + `Codex V-0` + `Hermes --safe-mode` + Human sign-off.
 
 ## v8.0.0 Single Designated Local Executor & Automated Spacefast Sync
 - **Single Local Executor Broker:** `$WIRE_BIN/designated_local_executor.py` (`Claude Code 2.1.321 --model fable --restricted` + Win32 Named Mutex + Dual-Engine `PreToolUse` Guard).

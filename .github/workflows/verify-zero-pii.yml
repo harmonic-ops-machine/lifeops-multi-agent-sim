@@ -5,9 +5,13 @@ on:
     branches:
       - main
       - "carbon/**"
+      - "improve/**"
+      - "feat/**"
+      - "fix/**"
   pull_request:
     branches:
       - main
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -30,6 +34,12 @@ jobs:
       - name: Run Trajectory Refinery end-to-end test suite
         run: python architecture/trajectory-refinery/tests/test_refinery_pipeline.py
 
+      - name: Verify GCS & OIDC IaC dry-run provisioning script
+        run: |
+          pwsh -NoProfile -File architecture/trajectory-refinery/scripts/provision_gcs_and_oidc.ps1 \
+            -ProjectId "enclave-ci-smoke" \
+            -BucketName "enclave-refinery-smoke"
+
       - name: Full-repository Zero-PII & advisory schema gate
         run: |
           python - <<'PY'
@@ -37,7 +47,7 @@ jobs:
 
           email_re = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}")
           win_re = re.compile(r"[A-Za-z]:[/\\]Users[/\\][A-Za-z0-9._-]+", re.IGNORECASE)
-          tok_re = re.compile(r"\b(ya29\.[A-Za-z0-9_-]{12,}|AIza[0-9A-Za-z_-]{20,}|ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|sk-[A-Za-z0-9_-]{20,})\b")
+          tok_re = re.compile(r"(?:\b(?:ya29\.[A-Za-z0-9_-]{12,}|AIza[0-9A-Za-z_-]{20,}|ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|sk-[A-Za-z0-9_-]{20,}|1//[A-Za-z0-9_-]{20,}|xox[baprs]-[A-Za-z0-9-]{10,})\b|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----)")
 
           errs = []
           tracked = subprocess.check_output(["git", "ls-files"], text=True).splitlines()

@@ -2,7 +2,7 @@
   "artifact_id": "highres-multi-agent-isolation-dag",
   "version": "8.2.0",
   "released_at_hst": "2026-11-12T16:49:58-10:00",
-  "git_head_parent": "c2ec7f2a2c01088cf3f850a0256c5b954c18cdd9",
+  "git_head_parent": "d1281d2ce9848fbdfac35ab79bb3e832a4f855c9",
   "zero_pii_public_airgap": true,
   "files": {
     "simulation_spec.json": {
@@ -14,8 +14,8 @@
       "bytes": 50607
     },
     "verify.py": {
-      "sha256": "ae6b85a568a83e0fe8fc5e044dfcdb3f424f4e99d62ee6313bc5d996696a17f9",
-      "bytes": 6440
+      "sha256": "407d03d7ed7ab0f3cea3e7fc8f6e69c38e30d78cc68a42baae47754f6a84810a",
+      "bytes": 9428
     },
     "carbon_loop_feed.json": {
       "sha256": "61c34ade7e142a6faf625ebcd86dddd0986db5d8cbe86412ff8b1a8ee8e61098",
@@ -26,12 +26,12 @@
       "bytes": 18198
     },
     "HANDOFF_REDACTED.md": {
-      "sha256": "12407f226ebf46b6c2108a5917071731cf1af73cb36e2207c005e29fd48a9b8f",
-      "bytes": 5069
+      "sha256": "0df650a07e42cdf8b5da7bdaa83351c846566334d9c0ed08d9c0d5ebd94a16dd",
+      "bytes": 5235
     },
     "CONTINUITY_CHECKPOINT.json": {
-      "sha256": "1976c39adce7f5e79ab8b448ebaae2ad444b1df13b7774f9d59e35c688c563ae",
-      "bytes": 3260
+      "sha256": "024119163219ca9061555b52a73dbbb3d2c4dd2f74cd1f072336bb775f432e1c",
+      "bytes": 3257
     },
     "advisories/CA-20261112-001.json": {
       "sha256": "123e2f0366a6b924df12cff029d76e2302e57f3eefbddeb0be1df83c224c90b8",

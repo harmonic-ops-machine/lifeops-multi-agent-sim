@@ -1,7 +1,7 @@
 {
   "schema": "CARBON-WORKFLOW-DIGEST-v1",
   "architecture_version": "8.2.0",
-  "generated_at_hst": "2026-11-17T04:14:30-10:00",
+  "generated_at_hst": "2026-11-17T17:50:24-10:00",
   "spacefast_target": {
     "space_id": "spc_4191a55af38b42d986059e576e4b9800",
     "digest_url": "https://harmonic-garden.space.fast/prior_work_digest.json",
@@ -63,22 +63,23 @@
       "workspace_mutation_ban": "STRICT_READ_ONLY (no @Gmail/@Drive/@Docs writes)"
     },
     "live_windows_arena": {
-      "ts_hst": "2026-11-17T04:14:30-10:00",
+      "ts_hst": "2026-11-17T17:50:24-10:00",
       "clean_single_executor_arena": false,
       "blocking_desktop_agents": {
-        "soniox_clipboard_injector": 2
+        "soniox_clipboard_injector": 2,
+        "claude_desktop_msix_cua": 15
       },
       "unauthorized_counts": {
         "chatgpt_cua": 0,
         "soniox_clipboard_injector": 2,
         "hermes_yolo": 0,
         "codex_ui": 0,
-        "claude_desktop_msix_cua": 0
+        "claude_desktop_msix_cua": 15
       },
       "authorized_processes": {
-        "antigravity_orchestrator": 6,
+        "antigravity_orchestrator": 16,
         "gemini_app_carbon_cloud_auditor": 0,
-        "claude_cli_jailed_workers": 0,
+        "claude_cli_jailed_workers": 5,
         "bitwarden_airgapped_vault": 4
       }
     }
@@ -87,80 +88,80 @@
     "reports": {
       "alias": "$LO_ROOT/reports",
       "present": true,
-      "count": 43,
-      "total_bytes": 870420,
+      "count": 56,
+      "total_bytes": 3874494,
       "recent_artifacts": [
         {
-          "artifact": "$LO_ROOT/reports/2026-11-17_SPACEFAST_INFO_AND_HISTORY.md",
-          "bytes": 13269,
-          "modified_hst": "2026-11-17T03:40:51-10:00",
-          "sha256_prefix": "bd72defc9926b356"
+          "artifact": "$LO_ROOT/reports/2026-11-17_Media_Public_Forensic_Attestation_by_AI_Gemini_Carbon_REDACTED.html",
+          "bytes": 31953,
+          "modified_hst": "2026-11-17T14:31:09-10:00",
+          "sha256_prefix": "7c63ef4106dc2428"
         },
         {
-          "artifact": "$LO_ROOT/reports/2026-11-16_SESSION_HANDOFF_ORCHESTRATOR_SPACEFAST_BRIDGE_f2ac3b2c.md",
-          "bytes": 14283,
-          "modified_hst": "2026-11-16T23:26:05-10:00",
-          "sha256_prefix": "a3212da4fdf41e2e"
+          "artifact": "$LO_ROOT/reports/2026-11-17_Media_Public_Forensic_Attestation_by_AI_Gemini_Carbon_REDACTED.md",
+          "bytes": 21654,
+          "modified_hst": "2026-11-17T14:30:53-10:00",
+          "sha256_prefix": "c98af4bda5b43a2d"
         },
         {
-          "artifact": "$LO_ROOT/reports/ANTIGRAVITY_SESSION_INDEX.md",
-          "bytes": 30212,
-          "modified_hst": "2026-11-16T21:12:12-10:00",
-          "sha256_prefix": "66a1476b864a4702"
+          "artifact": "$LO_ROOT/reports/2026-11-17_VERIFIED_ISSUES_AND_RESEARCH_ANALYSIS_SYNTHESIS.md",
+          "bytes": 34925,
+          "modified_hst": "2026-11-17T14:26:57-10:00",
+          "sha256_prefix": "7c72ea897430f5cf"
         },
         {
-          "artifact": "$LO_ROOT/reports/2026-11-10_master-action-items-registry.md",
-          "bytes": 7550,
-          "modified_hst": "2026-11-16T19:04:57-10:00",
-          "sha256_prefix": "cf4790c7d6436a3d"
+          "artifact": "$LO_ROOT/reports/2026-11-17_Forensic_Elevator_Malfunction_Analysis_and_Attestation_REDACTED.html",
+          "bytes": 49570,
+          "modified_hst": "2026-11-17T14:25:08-10:00",
+          "sha256_prefix": "8927e38952182226"
         },
         {
-          "artifact": "$LO_ROOT/reports/2026-11-16_GITHUB_REFINERY_DEPOSIT_AND_ENCLAVE_REVIEW.md",
-          "bytes": 3679,
-          "modified_hst": "2026-11-16T13:17:29-10:00",
-          "sha256_prefix": "11fcd79e1e556163"
+          "artifact": "$LO_ROOT/reports/2026-11-17_Court_Filing_HRE901b9_Declaration_and_AI_Forensic_Verification_Statement_REDACTED.html",
+          "bytes": 36470,
+          "modified_hst": "2026-11-17T14:25:07-10:00",
+          "sha256_prefix": "2a5fa31a1cb3ca7f"
         },
         {
-          "artifact": "$LO_ROOT/reports/2026-11-16_TRAJECTORY_REFINERY_MULTI_LEVEL_GOALS.md",
-          "bytes": 8694,
-          "modified_hst": "2026-11-16T13:04:41-10:00",
-          "sha256_prefix": "e5d4add14688ae28"
+          "artifact": "$LO_ROOT/reports/2026-11-17_Forensic_Elevator_Malfunction_Analysis_and_Attestation_REDACTED.md",
+          "bytes": 36583,
+          "modified_hst": "2026-11-17T14:21:10-10:00",
+          "sha256_prefix": "369803935cd05178"
         },
         {
-          "artifact": "$LO_ROOT/reports/CAAP_26_625_OPENING_BRIEF_VERIFIED_CLEAN_2026-11-13.md",
-          "bytes": 60130,
-          "modified_hst": "2026-11-13T14:39:59-10:00",
-          "sha256_prefix": "24ace3746634e9fd"
+          "artifact": "$LO_ROOT/reports/2026-11-17_Court_Filing_HRE901b9_Declaration_and_AI_Forensic_Verification_Statement_REDACTED.md",
+          "bytes": 25608,
+          "modified_hst": "2026-11-17T14:21:09-10:00",
+          "sha256_prefix": "d51ae8031a472107"
         },
         {
-          "artifact": "$LO_ROOT/reports/2026-11-13_SESSION_TRAJECTORY_AND_LESSONS_58b8e570.md",
-          "bytes": 13043,
-          "modified_hst": "2026-11-13T03:47:41-10:00",
-          "sha256_prefix": "22d32339d0f14ccb"
+          "artifact": "$LO_ROOT/reports/2026-11-17_ELEVATOR_MALFUNCTION_TECHNICAL_LEGAL_COMMON_SENSE_ATTESTATION.html",
+          "bytes": 1319755,
+          "modified_hst": "2026-11-17T14:20:14-10:00",
+          "sha256_prefix": "1488cad978c83c72"
         },
         {
-          "artifact": "$LO_ROOT/reports/2026-11-12_EXPLAINER_SUBAGENT_VS_ORCHESTRATOR_SESSION_IMPACT.md",
-          "bytes": 8536,
-          "modified_hst": "2026-11-12T22:09:36-10:00",
-          "sha256_prefix": "72fbe55f3021570f"
+          "artifact": "$LO_ROOT/reports/2026-11-17_COURT_DECLARATION_OF_AI_GEMINI_4_CARBON_GOOGLE_DEEPMIND.html",
+          "bytes": 1302934,
+          "modified_hst": "2026-11-17T14:18:57-10:00",
+          "sha256_prefix": "9ba8e95a277e8df6"
         },
         {
-          "artifact": "$LO_ROOT/reports/2026-11-12_SESSION_HANDOFF_V8_2_SINGLE_HUB_ROLLOVER.md",
-          "bytes": 15214,
-          "modified_hst": "2026-11-12T17:42:36-10:00",
-          "sha256_prefix": "b32cdc32ac247314"
+          "artifact": "$LO_ROOT/reports/2026-11-17_ELEVATOR_MALFUNCTION_TECHNICAL_LEGAL_COMMON_SENSE_ATTESTATION.md",
+          "bytes": 38377,
+          "modified_hst": "2026-11-17T14:18:01-10:00",
+          "sha256_prefix": "2a7754b80d456b2a"
         },
         {
-          "artifact": "$LO_ROOT/reports/2026-11-12_FULL_AGENTIC_CARBON_LOOP_PROVEN_V8_2.md",
-          "bytes": 5866,
-          "modified_hst": "2026-11-12T17:21:18-10:00",
-          "sha256_prefix": "c76bd3b03947a20a"
+          "artifact": "$LO_ROOT/reports/2026-11-17_COURT_DECLARATION_OF_AI_GEMINI_4_CARBON_GOOGLE_DEEPMIND.md",
+          "bytes": 25206,
+          "modified_hst": "2026-11-17T14:17:59-10:00",
+          "sha256_prefix": "dba0aa082c83bf6a"
         },
         {
-          "artifact": "$LO_ROOT/reports/2026-11-12_WINDOWS_SINGLE_EXECUTOR_AND_SPACEFAST_AUTOMATION_V8.md",
-          "bytes": 11126,
-          "modified_hst": "2026-11-12T14:34:09-10:00",
-          "sha256_prefix": "153e536470f254e3"
+          "artifact": "$LO_ROOT/reports/2026-11-17_MASTER_ALLEGATION_INVENTORY_UNVERIFIED_INTAKE.md",
+          "bytes": 73166,
+          "modified_hst": "2026-11-17T14:15:40-10:00",
+          "sha256_prefix": "118dd56af18268d3"
         }
       ]
     },
@@ -327,9 +328,39 @@
     "wire_automation_scripts": {
       "alias": "$WIRE_BIN",
       "present": true,
-      "count": 13,
-      "total_bytes": 221785,
+      "count": 15,
+      "total_bytes": 249528,
       "recent_artifacts": [
+        {
+          "artifact": "$WIRE_BIN/designated_local_executor.py",
+          "bytes": 22574,
+          "modified_hst": "2026-11-17T04:45:12-10:00",
+          "sha256_prefix": "c267387edaacebdb"
+        },
+        {
+          "artifact": "$WIRE_BIN/safety_process_guard.py",
+          "bytes": 18497,
+          "modified_hst": "2026-11-17T04:44:32-10:00",
+          "sha256_prefix": "6fedf09eeeb53832"
+        },
+        {
+          "artifact": "$WIRE_BIN/test_gh_enclave_guard.py",
+          "bytes": 3645,
+          "modified_hst": "2026-11-17T04:41:12-10:00",
+          "sha256_prefix": "be3ae7aa95231b45"
+        },
+        {
+          "artifact": "$WIRE_BIN/pretool_single_hub_guard.py",
+          "bytes": 18725,
+          "modified_hst": "2026-11-17T04:41:10-10:00",
+          "sha256_prefix": "44783de715555715"
+        },
+        {
+          "artifact": "$WIRE_BIN/sync_repo_mirrors_to_drive.py",
+          "bytes": 15967,
+          "modified_hst": "2026-11-17T04:16:39-10:00",
+          "sha256_prefix": "f204fddc35ff2d04"
+        },
         {
           "artifact": "$WIRE_BIN/spacefast_carbon_sync.py",
           "bytes": 44007,
@@ -337,22 +368,10 @@
           "sha256_prefix": "39bfca2827fadf92"
         },
         {
-          "artifact": "$WIRE_BIN/sync_repo_mirrors_to_drive.py",
-          "bytes": 15041,
-          "modified_hst": "2026-11-16T22:45:06-10:00",
-          "sha256_prefix": "da7d8eecea44a834"
-        },
-        {
           "artifact": "$WIRE_BIN/session_continuity_daemon.py",
           "bytes": 17629,
           "modified_hst": "2026-11-16T12:50:07-10:00",
           "sha256_prefix": "d62fb13bcf7c1fdf"
-        },
-        {
-          "artifact": "$WIRE_BIN/pretool_single_hub_guard.py",
-          "bytes": 14641,
-          "modified_hst": "2026-11-16T12:48:48-10:00",
-          "sha256_prefix": "96fb6ee643703355"
         },
         {
           "artifact": "$WIRE_BIN/legal_mode_profile.py",
@@ -373,12 +392,6 @@
           "sha256_prefix": "49217fe5fa5d2152"
         },
         {
-          "artifact": "$WIRE_BIN/designated_local_executor.py",
-          "bytes": 21983,
-          "modified_hst": "2026-11-12T14:15:48-10:00",
-          "sha256_prefix": "d90dfe2029aa484d"
-        },
-        {
           "artifact": "$WIRE_BIN/live_graph_verifier_server.py",
           "bytes": 15941,
           "modified_hst": "2026-11-12T13:30:14-10:00",
@@ -389,18 +402,6 @@
           "bytes": 29225,
           "modified_hst": "2026-11-12T13:26:38-10:00",
           "sha256_prefix": "808f953784830c87"
-        },
-        {
-          "artifact": "$WIRE_BIN/lifeops_workflow_sim.py",
-          "bytes": 19405,
-          "modified_hst": "2026-11-12T11:44:48-10:00",
-          "sha256_prefix": "4c54b176cda8ef63"
-        },
-        {
-          "artifact": "$WIRE_BIN/ensure_account_safety.py",
-          "bytes": 1208,
-          "modified_hst": "2026-11-12T11:35:01-10:00",
-          "sha256_prefix": "a963757eaf6c0ca9"
         }
       ]
     },
@@ -408,19 +409,37 @@
       "alias": "$LO_ROOT/simulations/lifeops-multi-agent-sim",
       "present": true,
       "count": 10,
-      "total_bytes": 132077,
+      "total_bytes": 133138,
       "recent_artifacts": [
+        {
+          "artifact": "$LO_ROOT/simulations/lifeops-multi-agent-sim/CONTINUITY_CHECKPOINT.json",
+          "bytes": 3260,
+          "modified_hst": "2026-11-17T06:32:05-10:00",
+          "sha256_prefix": "736843cf2f3cea23"
+        },
+        {
+          "artifact": "$LO_ROOT/simulations/lifeops-multi-agent-sim/manifest.json",
+          "bytes": 1374,
+          "modified_hst": "2026-11-17T06:32:05-10:00",
+          "sha256_prefix": "5dd66d0e7675ed68"
+        },
+        {
+          "artifact": "$LO_ROOT/simulations/lifeops-multi-agent-sim/prior_work_digest.json",
+          "bytes": 19252,
+          "modified_hst": "2026-11-17T04:32:02-10:00",
+          "sha256_prefix": "2ed1db54e3e11a20"
+        },
+        {
+          "artifact": "$LO_ROOT/simulations/lifeops-multi-agent-sim/carbon_loop_feed.json",
+          "bytes": 8066,
+          "modified_hst": "2026-11-17T04:32:02-10:00",
+          "sha256_prefix": "2e6198904a7fa9a6"
+        },
         {
           "artifact": "$LO_ROOT/simulations/lifeops-multi-agent-sim/verify.py",
           "bytes": 9428,
           "modified_hst": "2026-11-17T04:13:50-10:00",
           "sha256_prefix": "407d03d7ed7ab0f3"
-        },
-        {
-          "artifact": "$LO_ROOT/simulations/lifeops-multi-agent-sim/manifest.json",
-          "bytes": 1374,
-          "modified_hst": "2026-11-17T04:13:50-10:00",
-          "sha256_prefix": "d93b66f5b86a1cb9"
         },
         {
           "artifact": "$LO_ROOT/simulations/lifeops-multi-agent-sim/README.md",
@@ -435,28 +454,10 @@
           "sha256_prefix": "5813353ecea60910"
         },
         {
-          "artifact": "$LO_ROOT/simulations/lifeops-multi-agent-sim/CONTINUITY_CHECKPOINT.json",
-          "bytes": 3257,
-          "modified_hst": "2026-11-17T04:13:50-10:00",
-          "sha256_prefix": "024119163219ca90"
-        },
-        {
           "artifact": "$LO_ROOT/simulations/lifeops-multi-agent-sim/HANDOFF_REDACTED.md",
           "bytes": 5235,
           "modified_hst": "2026-11-17T04:13:50-10:00",
           "sha256_prefix": "0df650a07e42cdf8"
-        },
-        {
-          "artifact": "$LO_ROOT/simulations/lifeops-multi-agent-sim/prior_work_digest.json",
-          "bytes": 18198,
-          "modified_hst": "2026-11-17T04:13:47-10:00",
-          "sha256_prefix": "54c3a1683c23038a"
-        },
-        {
-          "artifact": "$LO_ROOT/simulations/lifeops-multi-agent-sim/carbon_loop_feed.json",
-          "bytes": 8062,
-          "modified_hst": "2026-11-17T04:13:47-10:00",
-          "sha256_prefix": "61c34ade7e142a6f"
         },
         {
           "artifact": "$LO_ROOT/simulations/lifeops-multi-agent-sim/simulation_spec.json",
@@ -483,13 +484,13 @@
     },
     {
       "workflow_id": "WF-02-CLAUDE-DESKTOP-TRAY-RESIDENCY",
-      "current_state": "clean_stopped",
+      "current_state": "resident_processes_15",
       "description": "ChatGPT, Soniox, and Codex UI are already stopped (0 procs); check whether closing MSIX Claude Desktop tray app frees ~1.8 GB RAM and eliminates residual CUA/skip-permissions spawn path while keeping standalone claude-code 2.1.321 CLI intact.",
       "question_for_carbon": "Confirm dependency separation between MSIX WindowsApps Claude.exe and AppData\\Local\\Claude-Data\\...\\claude-code\\2.1.321\\claude.exe."
     },
     {
       "workflow_id": "WF-03-WIRE-HEARTBEAT-AND-SCHEDULE-SYNC",
-      "current_state": "stale_556135s",
+      "current_state": "stale_605089s",
       "policy_reference": "$WORKSTATION/administration/POLICY.md",
       "description": "Periodic Spacefast digest upload + listSpaceVersionComments ingestion via Antigravity /schedule vs standalone pythonw wire worker.",
       "question_for_carbon": "Recommend optimal cadence, failure backoff, and schema evolution for prior-work regression detection."
